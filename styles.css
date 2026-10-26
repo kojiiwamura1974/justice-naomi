@@ -61,3 +61,6 @@
 .xLatestAction:hover{color:#97784e}
 .xLatestAction span{font-size:1.15rem}
 @media(max-width:760px){.xContentStable{min-height:260px;padding:1rem}.xLatestPanel{padding:1.25rem}.xLatestHeading{font-size:1.65rem}.xLatestDescription{font-size:.81rem}}
+
+/* Keep the Instagram profile card compact when fewer than five posts exist. */
+.socialWorks .instagramContent{min-height:0}
