@@ -85,3 +85,28 @@
   .socialWorks .instagramContent{min-height:0;overflow-x:hidden;overflow-y:visible;touch-action:auto;scrollbar-width:auto;padding:1rem .6rem}
   .socialWorks .instagramContent iframe.instagram-media-rendered{display:block!important;min-width:0!important;max-width:100%!important;width:100%!important;margin:0 auto 12px!important}
 }
+
+/* 2026-10-27: full individual Instagram post embeds without square thumbnail crops. */
+.igViewerTop{display:flex;align-items:center;justify-content:space-between;gap:.7rem;padding:.9rem 1rem;background:#fff;border-bottom:1px solid #ebe8e2}
+.igViewerTop>span{font-size:.72rem;line-height:1.5;color:#5a6875}
+.igViewerControls{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+.igViewerControls>span{font-variant-numeric:tabular-nums;font-size:.7rem;color:#475b6f;margin-right:.4rem}
+.igViewerControls button{border:1px solid #c8b897;background:#fbf9f4;color:#173250;border-radius:50%;width:39px;height:39px;display:grid;place-items:center;font-size:1.15rem;cursor:pointer}
+.igViewerControls button:disabled{cursor:default;opacity:.35}
+.igViewerControls button:focus-visible{outline:2px solid #133654;outline-offset:2px}
+.igLargeViewport{display:flex;width:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;background:#fff}
+.igLargeViewport::-webkit-scrollbar{display:none}
+.igLargeSlide{box-sizing:border-box;scroll-snap-align:start;scroll-snap-stop:always;flex:0 0 100%;min-width:0;padding:.7rem 1rem 1rem;display:block;align-self:flex-start}
+.igLargeSlide .instagram-media{margin:0 auto!important;max-width:540px!important;width:100%!important;min-width:0!important}
+.igLargeSlide iframe.instagram-media-rendered{display:block!important;margin:0 auto!important;max-width:540px!important;width:100%!important;min-width:0!important}
+.igAutoList{border-top:1px solid #ebe8e2;background:#f6f3ed}
+.igAutoList>summary{cursor:pointer;padding:1.2rem 1.4rem;font-size:.77rem;color:#1c3d62;line-height:1.6;font-weight:750}
+.igAutoListBody{padding:0 1rem 1rem}
+.igAutoListBody iframe.instagram-media-rendered{max-width:100%!important;width:100%!important;min-width:0!important}
+@media(max-width:760px){
+  .igViewerTop{padding:.7rem .8rem}
+  .igViewerTop>span{font-size:.67rem}
+  .igViewerControls button{width:36px;height:36px}
+  .igLargeSlide{padding:.55rem .5rem .9rem}
+  .igAutoList>summary{padding:1.05rem}
+}
