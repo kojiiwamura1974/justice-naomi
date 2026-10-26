@@ -10,7 +10,7 @@
   <meta property="og:image" content="/assets/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/assets/favicon.svg">
-  <link rel="stylesheet" href="/styles.css?v=20261027-2">
+  <link rel="stylesheet" href="/styles.css?v=20261027-3">
 </head>
 <body>
   <main id="top">
@@ -33,7 +33,14 @@
       <div class="socialColumns">
         <article class="socialCard">
           <div class="socialCardTop"><div><p class="micro">PHOTOGRAPH / REELS</p><h3>Instagram</h3><small>@justice__naomi</small></div><a href="https://www.instagram.com/justice__naomi/" target="_blank" rel="noopener noreferrer">PROFILE ↗</a></div>
-          <div class="instagramContent">
+          <div class="instagramNav" aria-label="Instagram投稿の横スクロール操作">
+            <span>投稿を大きく表示・左右に送れます</span>
+            <div class="instagramNavButtons">
+              <button type="button" data-ig-step="-1" aria-label="前のInstagram投稿を見る">←</button>
+              <button type="button" data-ig-step="1" aria-label="次のInstagram投稿を見る">→</button>
+            </div>
+          </div>
+          <div class="instagramContent" id="naomi-instagram-scroll" role="region" aria-label="Instagram最近の投稿">
             <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/justice__naomi/" data-instgrm-version="14" style="background:#fff;border:0;margin:0 auto;min-width:0;max-width:540px;width:100%;"><a href="https://www.instagram.com/justice__naomi/" target="_blank" rel="noopener noreferrer">Instagramの最近の投稿を見る</a></blockquote>
           </div>
           <p class="socialCardNote">Instagram公式プロフィールの最近の投稿を表示しています。</p>
@@ -65,5 +72,15 @@
     <footer><a class="logo" href="#top">PROJECT <b>NAOMI</b></a><a href="/adam/">ADAM ARCHIVE ↗</a><p>PRODUCED BY 尚美製作委員会 / KOZO CLUB</p><p>© 2026 PROJECT NAOMI</p></footer>
   </main>
 <script async src="https://www.instagram.com/embed.js" charset="utf-8"></script>
+<script>
+  document.querySelectorAll('[data-ig-step]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var holder = document.getElementById('naomi-instagram-scroll');
+      if (!holder) return;
+      var distance = 180 * Number(button.dataset.igStep || 0);
+      holder.scrollBy({left: distance, behavior: 'smooth'});
+    });
+  });
+</script>
 </body>
 </html>
