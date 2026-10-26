@@ -76,3 +76,12 @@
   .socialWorks .instagramContent{min-height:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-color:#c2a77b #f6f3ed;scrollbar-width:thin;touch-action:pan-x}
   .socialWorks .instagramContent iframe.instagram-media-rendered{display:block!important;min-width:540px!important;max-width:none!important;width:540px!important;margin:0 0 12px!important}
 }
+
+/* 2026-10-27: Keep all three Instagram thumbnails within the phone width.
+   The Instagram-controlled inner frame crops portrait cover images to square;
+   only Instagram itself can change that. Do not enlarge the iframe past the card. */
+@media(max-width:760px){
+  .socialWorks .socialColumns .socialCard:first-child{margin-left:-6vw;margin-right:-6vw;max-width:none;width:calc(100% + 12vw)}
+  .socialWorks .instagramContent{min-height:0;overflow-x:hidden;overflow-y:visible;touch-action:auto;scrollbar-width:auto;padding:1rem .6rem}
+  .socialWorks .instagramContent iframe.instagram-media-rendered{display:block!important;min-width:0!important;max-width:100%!important;width:100%!important;margin:0 auto 12px!important}
+}
