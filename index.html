@@ -20,8 +20,20 @@
   <svg class="hero-beams" aria-hidden="true"><polygon id="beam-real" fill="white"/><polygon id="beam-manga" fill="white"/></svg>
   <div class="hero-edition"><span>JUSTICE NAOMI</span><span>OFFICIAL / KOZO CLUB</span></div>
   <div class="hero-title"><p>SHOW-WAのデジタルアイドル</p><h1 id="hero-name">ジャスティス尚美</h1></div>
+  <div class="hero-carousel" id="heroCarousel">
+    <div class="hero-slide" data-hero-person="real" aria-label="実写の尚美">
   <img class="hero-person real" src="/assets/real_cutout.png" alt="実写の尚美。黒い衣装で両手を顔のそばに重ねている" width="1024" height="1536" fetchpriority="high">
+    </div>
+    <div class="hero-slide" data-hero-person="manga" aria-label="漫画の尚美">
   <img class="hero-person manga" src="/assets/manga_cutout.png" alt="漫画の尚美。同じ衣装とポーズの別レイヤー" width="1024" height="1536" fetchpriority="high">
+    </div>
+  </div>
+  <div class="hero-carousel-controls" aria-label="尚美の表示を切り替え">
+    <button type="button" data-hero-index="0" aria-controls="heroCarousel" aria-pressed="true"><span aria-hidden="true">01</span> 実写</button>
+    <button type="button" data-hero-index="1" aria-controls="heroCarousel" aria-pressed="false"><span aria-hidden="true">02</span> 漫画</button>
+    <span class="hero-swipe-hint" id="heroSwipeHint"><span aria-hidden="true">↔</span> 左右にスワイプ</span>
+    <span class="hero-slide-status" aria-live="polite" aria-atomic="true">実写の尚美、1 / 2</span>
+  </div>
   <div class="hero-bottom"><span class="hero-description">写真も、言葉も、ステージも。<br>ここが、ジャスティス尚美の公式サイト。</span><a class="hero-scroll" href="#latest">LATEST POSTS <span aria-hidden="true">↓</span></a><span class="hero-credit">PRESENTED BY<br>KOZO CLUB</span></div>
 </section>
 <div class="chapter-strip" aria-hidden="true"><span>JUSTICE NAOMI</span><span>PHOTOGRAPH · WORDS · STAGE</span><span>尚美製作委員会 / KOZO CLUB</span></div>
@@ -79,4 +91,4 @@
       <div class="adamCtaText"><p class="micro">03 / THE ADAM OF NAOMI</p><h2>尚美のアダム。<br>始祖の記録。</h2><p>あの一枚が、すべての始まりだった。<br>最初の写真と、当時の「一枚から、始まる物語。」は、そのままアーカイブとして残しています。</p><a href="/adam/">始祖の記録を読む <span>↗</span></a></div>
     </section>
     <footer><a class="logo" href="#top">PROJECT <b>NAOMI</b></a><a href="/adam/">ADAM ARCHIVE ↗</a><p>PRODUCED BY 尚美製作委員会 / KOZO CLUB</p><p>© 2026 PROJECT NAOMI</p></footer>
-</main><script src="/app.js"></script></body></html>
+</main><script src="/app.js"></script><script src="/hero-carousel.js"></script></body></html>

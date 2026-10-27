@@ -17,3 +17,33 @@
 @media(min-width:768px){.hero-title p{font-size:clamp(14px,1.8vw,26px)}}
 @media(max-width:767px){.hero-bottom{inset:auto 0 0;min-height:102px;padding:14px 6%;background:#000;mix-blend-mode:normal}.hero-description{margin-bottom:2px}.hero-scroll{padding:3px 0}.hero-person{bottom:102px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Independent phone variation. These wrappers create no boxes on desktop. */
+.hero-carousel,.hero-slide{display:contents}
+.hero-carousel-controls{display:none}
+.hero-slide-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+@media(max-width:767px){
+  .hero{height:auto;min-height:0;max-height:none;padding-top:83px}
+  .hero-title{position:relative;top:auto;left:auto;flex:none;z-index:1;padding:0 12px}
+  .hero-title p{font-size:clamp(11px,3.3vw,17px);line-height:1.5;letter-spacing:.02em;margin:0 0 10px}
+  .hero-title h1{font-size:clamp(26px,7.5vw,48px);line-height:1.25;letter-spacing:-.07em}
+  .hero-carousel{position:relative;display:flex;width:100%;height:clamp(390px,112vw,530px);margin-top:22px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;z-index:2}
+  .hero-carousel::-webkit-scrollbar{display:none}
+  .hero-carousel:focus-visible{outline:2px solid #b12b30;outline-offset:-4px}
+  .hero-slide{position:relative;display:block;flex:0 0 100%;min-width:0;height:100%;scroll-snap-align:start;scroll-snap-stop:always}
+  .hero .hero-person.real,.hero .hero-person.manga{position:absolute;top:0;bottom:auto;left:50%;right:auto;transform:translateX(-50%);width:auto;max-width:92%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
+  .hero-carousel-controls{position:relative;display:flex;align-items:center;justify-content:center;gap:14px;min-height:60px;padding:6px 4%;background:#000;color:white;z-index:3}
+  .hero-carousel-controls button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:65px;min-height:44px;padding:8px 5px;background:transparent;color:#8e8e8e;border:0;border-bottom:1px solid #484848;font-size:11px;line-height:1;white-space:nowrap}
+  .hero-carousel-controls button span{font-size:8px;letter-spacing:.08em}
+  .hero-carousel-controls button[aria-pressed="true"]{color:white;border-bottom:2px solid white}
+  .hero-swipe-hint{font-size:8px;letter-spacing:.04em;color:#a8a8a8;white-space:nowrap}
+  .hero-swipe-hint>span{font-size:15px;margin-right:4px}
+  .hero-bottom{position:relative;inset:auto;width:100%;min-height:102px}
+}
+
+/* Portrait phones keep each complete phrase on one line; landscape keeps its existing type scale. */
+@media (max-width:767px) and (orientation:portrait){
+  .hero-title p,.hero-title h1{white-space:nowrap;word-break:keep-all;overflow-wrap:normal}
+  .hero-title p{font-size:clamp(11px,3.75vw,18px)}
+  .hero-title h1{font-size:clamp(26px,8.4vw,48px)}
+}
