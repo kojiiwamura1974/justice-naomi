@@ -1,10 +1,10 @@
-/* Phone-only, user-controlled carousel. Native scrolling handles touch and trackpads. */
+/* Portrait phones only. A width-only query previously kept narrow landscape in carousel mode. */
 (() => {
   const viewport = document.getElementById('heroCarousel');
   const slides = [...viewport.querySelectorAll('.hero-slide')];
   const buttons = [...document.querySelectorAll('[data-hero-index]')];
   const status = document.querySelector('.hero-slide-status');
-  const phone = matchMedia('(max-width: 767px)');
+  const phone = matchMedia('(max-width: 767px) and (orientation: portrait)');
   let selected = 0;
   let previousWidth = 0;
 

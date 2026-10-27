@@ -1,11 +1,13 @@
 /* Both white rays share a high off-screen apex. The visible shapes may be clipped. */
 const hero = document.querySelector('.hero');
+const portraitHero = matchMedia('(max-width: 767px) and (orientation: portrait)');
 function updateBeams() {
   const w = hero.clientWidth, h = hero.clientHeight;
-  const mobile = w < 768;
-  const apex = {x:w/2, y:mobile ? -h*.6 : -h*1.6};
+  const mobile = portraitHero.matches;
+  const narrow = w < 768;
+  const apex = {x:w/2, y:mobile ? -h*.6 : narrow ? -h*1.45 : -h*1.6};
   const baseY = h + 2;
-  const leftInner = mobile ? w*.47 : w*.35;
+  const leftInner = narrow ? w*.47 : w*.35;
   const rightInner = w-leftInner;
   const outerLeft = -w*1.35, outerRight=w*2.35;
   const polygons=mobile ? [[[apex.x,apex.y],[-w*.45,baseY],[w*1.45,baseY]],[]] : [[[apex.x,apex.y],[outerLeft,baseY],[leftInner,baseY]],[[apex.x,apex.y],[rightInner,baseY],[outerRight,baseY]]];
@@ -13,7 +15,7 @@ function updateBeams() {
   ['beam-real','beam-manga'].forEach((id,i)=>document.getElementById(id).setAttribute('points',polygons[i].map(p=>p.join(',')).join(' ')));
   hero.dataset.geometry=JSON.stringify({w,h,apex,polygons});
 }
-new ResizeObserver(updateBeams).observe(hero);updateBeams();
+new ResizeObserver(updateBeams).observe(hero);portraitHero.addEventListener('change',updateBeams);updateBeams();
 
 const gallery=document.getElementById('igLargeViewport');
 const slides=[...gallery.querySelectorAll('.igLargeSlide')];
