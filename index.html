@@ -10,16 +10,21 @@
   <meta property="og:image" content="/assets/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/assets/favicon.svg">
-  <link rel="stylesheet" href="/styles.css?v=20261027-5">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <main id="top">
-    <header class="header"><a class="logo" href="#top">PROJECT <b>NAOMI</b></a><nav><a href="#profile">PROFILE</a><a href="#latest">LATEST</a><a href="#adam">ADAM</a></nav></header>
-    <section class="hero">
-      <div class="heroImage"><img src="/assets/current-naomi.png" alt="現在の尚美。紺と白のステージ衣装を着ている"></div>
-      <div class="heroCopy"><p class="micro">JUSTICE NAOMI / KOZO CLUB</p><h1>ジャスティス<br>尚美。</h1><p class="heroLead">写真も、言葉も、ステージも。<br>ここが、ジャスティス尚美の公式サイト。</p><a class="textLink" href="#latest">LATEST POSTS <span>↓</span></a></div>
-      <span class="version">PRESENTED BY KOZO CLUB</span>
-    </section>
+<a class="skip-link" href="#profile">本文へスキップ</a>
+<main id="top">
+<header class="header"><a class="logo" href="#top"><span class="logo-dot" aria-hidden="true"></span>PROJECT <b>NAOMI</b></a><nav aria-label="メインナビゲーション"><a href="#profile">PROFILE</a><a href="#latest">LATEST</a><a href="#adam">ADAM <span aria-hidden="true">↘</span></a></nav></header>
+<section class="hero" aria-labelledby="hero-name">
+  <svg class="hero-beams" aria-hidden="true"><polygon id="beam-real" fill="white"/><polygon id="beam-manga" fill="white"/></svg>
+  <div class="hero-edition"><span>JUSTICE NAOMI</span><span>OFFICIAL / KOZO CLUB</span></div>
+  <div class="hero-title"><p>SHOW-WAのデジタルアイドル</p><h1 id="hero-name">ジャスティス尚美</h1></div>
+  <img class="hero-person real" src="/assets/real_cutout.png" alt="実写の尚美。黒い衣装で両手を顔のそばに重ねている" width="1024" height="1536" fetchpriority="high">
+  <img class="hero-person manga" src="/assets/manga_cutout.png" alt="漫画の尚美。同じ衣装とポーズの別レイヤー" width="1024" height="1536" fetchpriority="high">
+  <div class="hero-bottom"><span class="hero-description">写真も、言葉も、ステージも。<br>ここが、ジャスティス尚美の公式サイト。</span><a class="hero-scroll" href="#latest">LATEST POSTS <span aria-hidden="true">↓</span></a><span class="hero-credit">PRESENTED BY<br>KOZO CLUB</span></div>
+</section>
+<div class="chapter-strip" aria-hidden="true"><span>JUSTICE NAOMI</span><span>PHOTOGRAPH · WORDS · STAGE</span><span>尚美製作委員会 / KOZO CLUB</span></div>
     <section class="current" id="profile">
       <div class="currentPhoto"><img src="/assets/current-naomi.png" alt="現在の尚美の全身写真"><span>NOW</span></div>
       <div class="currentInfo"><p class="micro">01 / JUSTICE NAOMI</p><h2>今日も、<br>ジャスティス。</h2><p class="currentLead">ジャスティス尚美。写真や映像、日々の発信。<br>いまの尚美を、ここから届けます。</p>
@@ -41,16 +46,13 @@
               <button type="button" id="igSlideNext" aria-label="次のInstagram投稿">→</button>
             </div>
           </div>
-          <div class="igLargeViewport" id="igLargeViewport" role="region" aria-roledescription="カルーセル" aria-label="Instagramの最近の投稿3件">
-            <div class="igLargeSlide" aria-label="1件目・最新リール"><blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DaiSK3GtZAJ/" data-instgrm-version="14" style="background:#fff;border:0;margin:0 auto;min-width:0;max-width:540px;width:100%;"><a href="https://www.instagram.com/reel/DaiSK3GtZAJ/" target="_blank" rel="noopener noreferrer">Instagramの最新リールを表示</a></blockquote></div>
-            <div class="igLargeSlide" aria-label="2件目・自己紹介リール"><blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DaCN3E4yXe4/" data-instgrm-version="14" style="background:#fff;border:0;margin:0 auto;min-width:0;max-width:540px;width:100%;"><a href="https://www.instagram.com/reel/DaCN3E4yXe4/" target="_blank" rel="noopener noreferrer">Instagramの自己紹介リールを表示</a></blockquote></div>
-            <div class="igLargeSlide" aria-label="3件目・写真投稿"><blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DaAsE8OHzMN/" data-instgrm-version="14" style="background:#fff;border:0;margin:0 auto;min-width:0;max-width:540px;width:100%;"><a href="https://www.instagram.com/p/DaAsE8OHzMN/" target="_blank" rel="noopener noreferrer">Instagramの写真投稿を表示</a></blockquote></div>
+          <div class="igLargeViewport" id="igLargeViewport" role="region" aria-roledescription="カルーセル" aria-label="Instagramの最近の投稿3件"><div class="igLargeSlide" aria-label="最新リール"><div class="post-preview"><span class="post-type">REEL / 01</span><span class="post-symbol" aria-hidden="true">◎</span><h4>最新リール</h4><p>@justice__naomi</p><a href="https://www.instagram.com/reel/DaiSK3GtZAJ/" target="_blank" rel="noopener noreferrer">Instagramで見る ↗</a><button class="load-post" data-post="https://www.instagram.com/reel/DaiSK3GtZAJ/" type="button">ここで投稿を表示</button></div></div><div class="igLargeSlide" aria-label="自己紹介リール"><div class="post-preview"><span class="post-type">REEL / 02</span><span class="post-symbol" aria-hidden="true">◎</span><h4>自己紹介リール</h4><p>@justice__naomi</p><a href="https://www.instagram.com/reel/DaCN3E4yXe4/" target="_blank" rel="noopener noreferrer">Instagramで見る ↗</a><button class="load-post" data-post="https://www.instagram.com/reel/DaCN3E4yXe4/" type="button">ここで投稿を表示</button></div></div><div class="igLargeSlide" aria-label="写真投稿"><div class="post-preview"><span class="post-type">PHOTOGRAPH / 03</span><span class="post-symbol" aria-hidden="true">◎</span><h4>写真投稿</h4><p>@justice__naomi</p><a href="https://www.instagram.com/p/DaAsE8OHzMN/" target="_blank" rel="noopener noreferrer">Instagramで見る ↗</a><button class="load-post" data-post="https://www.instagram.com/p/DaAsE8OHzMN/" type="button">ここで投稿を表示</button></div></div>
           </div>
           <details class="igAutoList" id="igAutoList">
             <summary>最新の投稿一覧も見る（自動更新）</summary>
             <div class="igAutoListBody" id="igAutoListBody"><p>一覧を読み込みます。</p></div>
           </details>
-          <p class="socialCardNote">個別投稿を大きく表示しています。新しい投稿は「最新の投稿一覧」で確認できます。</p>
+          <p class="socialCardNote">3件の投稿を切り替えられます。新しい投稿は「最新の投稿一覧」で確認できます。</p>
         </article>
         <article class="socialCard">
           <div class="socialCardTop"><div><p class="micro">WORDS / UPDATES</p><h3>X <span>旧Twitter</span></h3><small>@justice__naomi</small></div><a href="https://x.com/justice__naomi" target="_blank" rel="noopener noreferrer">PROFILE ↗</a></div>
@@ -77,41 +79,4 @@
       <div class="adamCtaText"><p class="micro">03 / THE ADAM OF NAOMI</p><h2>尚美のアダム。<br>始祖の記録。</h2><p>あの一枚が、すべての始まりだった。<br>最初の写真と、当時の「一枚から、始まる物語。」は、そのままアーカイブとして残しています。</p><a href="/adam/">始祖の記録を読む <span>↗</span></a></div>
     </section>
     <footer><a class="logo" href="#top">PROJECT <b>NAOMI</b></a><a href="/adam/">ADAM ARCHIVE ↗</a><p>PRODUCED BY 尚美製作委員会 / KOZO CLUB</p><p>© 2026 PROJECT NAOMI</p></footer>
-  </main>
-<script async src="https://www.instagram.com/embed.js" charset="utf-8"></script>
-<script>
-  (function () {
-    var gallery = document.getElementById('igLargeViewport');
-    var slides = Array.prototype.slice.call(gallery.querySelectorAll('.igLargeSlide'));
-    var counter = document.getElementById('igSlideNumber');
-    var prev = document.getElementById('igSlidePrev');
-    var next = document.getElementById('igSlideNext');
-    function update() {
-      var index = Math.min(slides.length - 1, Math.max(0, Math.round(gallery.scrollLeft / Math.max(1, gallery.clientWidth))));
-      counter.textContent = (index + 1) + ' / ' + slides.length;
-      prev.disabled = index === 0;
-      next.disabled = index === slides.length - 1;
-    }
-    function go(n) {
-      var index = Math.min(slides.length - 1, Math.max(0, Math.round(gallery.scrollLeft / Math.max(1, gallery.clientWidth)) + n));
-      gallery.scrollTo({left: gallery.clientWidth * index, behavior: 'smooth'});
-    }
-    prev.addEventListener('click', function () {go(-1);});
-    next.addEventListener('click', function () {go(1);});
-    gallery.addEventListener('scroll', update, {passive: true});
-    window.addEventListener('resize', update);
-    update();
-
-    var details = document.getElementById('igAutoList');
-    details.addEventListener('toggle', function () {
-      if (!details.open || details.dataset.loaded) return;
-      details.dataset.loaded = 'true';
-      document.getElementById('igAutoListBody').innerHTML =
-        '<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/justice__naomi/" data-instgrm-version="14" style="background:#fff;border:0;margin:0 auto;min-width:0;max-width:540px;width:100%;"><a href="https://www.instagram.com/justice__naomi/" target="_blank" rel="noopener noreferrer">最近の投稿を見る</a></blockquote>';
-      if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process();
-      else window.addEventListener('load', function () {if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process();}, {once: true});
-    });
-  })();
-</script>
-</body>
-</html>
+</main><script src="/app.js"></script></body></html>
