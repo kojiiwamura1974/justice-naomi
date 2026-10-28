@@ -3,7 +3,9 @@ const hero = document.querySelector('.hero');
 const portraitHero = matchMedia('(max-width: 767px) and (orientation: portrait)');
 const landscapePhone = matchMedia('(orientation: landscape) and (max-width: 1050px) and (max-height: 500px)');
 function updateBeams() {
-  const w = hero.clientWidth, h = hero.clientHeight;
+  const stage = document.querySelector('.hero-stage');
+  const bounds = stage && !portraitHero.matches && !landscapePhone.matches ? stage : hero;
+  const w = bounds.clientWidth, h = bounds.clientHeight;
   const mobile = portraitHero.matches;
   const narrow = w < 768 && !landscapePhone.matches;
   const apex = {x:w/2, y:mobile ? -h*.12 : narrow ? -h*1.45 : -h*1.6};
@@ -16,7 +18,7 @@ function updateBeams() {
   ['beam-real','beam-manga'].forEach((id,i)=>document.getElementById(id).setAttribute('points',polygons[i].map(p=>p.join(',')).join(' ')));
   hero.dataset.geometry=JSON.stringify({w,h,apex,polygons});
 }
-new ResizeObserver(updateBeams).observe(hero);portraitHero.addEventListener('change',updateBeams);landscapePhone.addEventListener('change',updateBeams);updateBeams();
+const beamResizeObserver = new ResizeObserver(updateBeams);beamResizeObserver.observe(hero);beamResizeObserver.observe(document.querySelector('.hero-stage'));portraitHero.addEventListener('change',updateBeams);landscapePhone.addEventListener('change',updateBeams);updateBeams();
 
 const englishUI=document.documentElement.lang==='en';
 const gallery=document.getElementById('igLargeViewport');

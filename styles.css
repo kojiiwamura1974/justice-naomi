@@ -85,3 +85,13 @@
 @media(max-width:1050px){.profileIntro{grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:36px}.introScript{font-size:14px;line-height:1.95}}
 @media(max-width:767px){.language-switch{gap:3px}.current.has-intro{row-gap:50px}.profileIntro{grid-template-columns:minmax(0,1fr);gap:30px}.profileIntroVideo{max-width:350px}.profileIntroCopy h2{font-size:32px;margin:17px 0 22px}.introScript{font-size:14px;line-height:2}.introScriptNote{margin-top:22px}}
 @media(orientation:landscape) and (max-width:1050px) and (max-height:500px){.current.has-intro{row-gap:50px}.profileIntro{grid-template-columns:minmax(0,1fr);gap:30px}.profileIntroVideo{max-width:300px}}
+
+/* Local candidate: reference desktop composition caps at 1840 CSS pixels. */
+.hero-stage{position:relative;width:100%;max-width:1840px;height:100%;margin-inline:auto}
+@media(max-width:767px) and (orientation:portrait){.hero-stage{display:contents}}
+@media(orientation:landscape) and (max-width:1050px) and (max-height:500px){.hero-stage{display:contents}}
+
+/* Auxiliary hero row removed; portrait height has no reserved row. */
+@media(max-width:767px) and (orientation:portrait){.hero{padding-bottom:0}}
+
+footer{flex-wrap:wrap}footer p.footerCopyright{margin-left:auto;width:auto;font-size:12px;color:#ddd;letter-spacing:.06em}footer p.footerDisclosure{flex-basis:100%;width:100%;margin:0;font-size:9px;line-height:1.8;color:#aaa}@media(max-width:767px){footer p.footerCopyright{font-size:11px}footer p.footerDisclosure{font-size:8px}}
