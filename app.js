@@ -6,7 +6,7 @@ function updateBeams() {
   const w = hero.clientWidth, h = hero.clientHeight;
   const mobile = portraitHero.matches;
   const narrow = w < 768 && !landscapePhone.matches;
-  const apex = {x:w/2, y:mobile ? -h*.6 : narrow ? -h*1.45 : -h*1.6};
+  const apex = {x:w/2, y:mobile ? -h*.12 : narrow ? -h*1.45 : -h*1.6};
   const baseY = h + 2;
   const leftInner = narrow ? w*.47 : w*.35;
   const rightInner = w-leftInner;
