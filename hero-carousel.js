@@ -1,5 +1,6 @@
 /* Portrait phones only. A width-only query previously kept narrow landscape in carousel mode. */
 (() => {
+  const englishUI = document.documentElement.lang === 'en';
   const viewport = document.getElementById('heroCarousel');
   const slides = [...viewport.querySelectorAll('.hero-slide')];
   const buttons = [...document.querySelectorAll('[data-hero-index]')];
@@ -15,7 +16,7 @@
       slide.inert = phone.matches && index !== selected;
       if (phone.matches) {
         slide.setAttribute('role', 'group');
-        slide.setAttribute('aria-roledescription', 'スライド');
+        slide.setAttribute('aria-roledescription', englishUI ? 'slide' : 'スライド');
         slide.setAttribute('aria-hidden', String(index !== selected));
       } else {
         slide.removeAttribute('role');
@@ -23,7 +24,7 @@
         slide.removeAttribute('aria-hidden');
       }
     });
-    status.textContent = `${selected === 0 ? '実写' : '漫画'}の尚美、${selected + 1} / 2`;
+    status.textContent = englishUI ? `${selected === 0 ? 'Photo' : 'Manga'} Naomi, ${selected + 1} of 2` : `${selected === 0 ? '実写' : '漫画'}の尚美、${selected + 1} / 2`;
   }
 
   function go(index) {
@@ -35,8 +36,8 @@
     if (phone.matches) {
       viewport.tabIndex = 0;
       viewport.setAttribute('role', 'region');
-      viewport.setAttribute('aria-roledescription', 'カルーセル');
-      viewport.setAttribute('aria-label', '尚美の実写と漫画');
+      viewport.setAttribute('aria-roledescription', englishUI ? 'carousel' : 'カルーセル');
+      viewport.setAttribute('aria-label', englishUI ? 'Photographic and manga Naomi' : '尚美の実写と漫画');
       viewport.setAttribute('aria-describedby', 'heroSwipeHint');
       go(selected);
     } else {

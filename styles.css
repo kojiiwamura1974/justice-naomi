@@ -70,3 +70,18 @@
   .hero .hero-person.real{left:auto;right:67%}
   .hero .hero-person.manga{left:67%;right:auto}
 }
+
+/* Profile introduction and language links. Accepted hero styles remain unchanged. */
+.language-switch{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.language-switch strong{font-weight:700}.language-switch i{font-style:normal;opacity:.4}.language-switch a{opacity:.65}.language-switch a:hover{opacity:1}
+.current.has-intro{row-gap:90px}
+.profileIntro{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:clamp(36px,6vw,90px);align-items:center}
+.profileIntroVideo{margin:0;width:100%;max-width:360px;justify-self:start;background:#000}
+.profileIntroVideo video{display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:contain;background:#000}
+.profileIntroVideo figcaption{display:flex;justify-content:space-between;gap:15px;padding:13px 15px;color:#ddd;font-size:8px;letter-spacing:.13em}
+.profileIntroCopy{min-width:0}.profileIntroCopy h2{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:clamp(30px,3.1vw,46px);line-height:1.4;letter-spacing:-.045em;font-weight:500;margin:20px 0 26px}
+.introScript{font-size:15px;line-height:2.05;max-width:42em}.introScript p{margin:0 0 1.15em}.introScript p:last-child{margin-bottom:0}
+.introScriptNote{font-size:10px;line-height:1.8;color:var(--muted);border-top:1px solid var(--line);margin:26px 0 0;padding-top:14px}
+@media(max-width:1050px){.profileIntro{grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:36px}.introScript{font-size:14px;line-height:1.95}}
+@media(max-width:767px){.language-switch{gap:3px}.current.has-intro{row-gap:50px}.profileIntro{grid-template-columns:minmax(0,1fr);gap:30px}.profileIntroVideo{max-width:350px}.profileIntroCopy h2{font-size:32px;margin:17px 0 22px}.introScript{font-size:14px;line-height:2}.introScriptNote{margin-top:22px}}
+@media(orientation:landscape) and (max-width:1050px) and (max-height:500px){.current.has-intro{row-gap:50px}.profileIntro{grid-template-columns:minmax(0,1fr);gap:30px}.profileIntroVideo{max-width:300px}}

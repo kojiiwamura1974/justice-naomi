@@ -1,3 +1,5 @@
 /prototype /prototype/ 301
 /prototype/* /prototype/:splat 200
+/en /en/ 301
+/en/* /en/index.html 200
 /* /index.html 200
