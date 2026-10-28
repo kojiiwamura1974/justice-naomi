@@ -32,8 +32,10 @@ function go(n){gallery.scrollTo({left:gallery.clientWidth*Math.min(slides.length
 prev.addEventListener('click',()=>go(-1));next.addEventListener('click',()=>go(1));gallery.addEventListener('scroll',updateGallery,{passive:true});
 window.addEventListener('resize',()=>{gallery.scrollTo({left:0,behavior:'instant'});updateGallery()});updateGallery();
 let instagramLoading;
-function loadInstagram(){if(window.instgrm)return Promise.resolve();if(!instagramLoading)instagramLoading=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://www.instagram.com/embed.js';s.async=true;s.onload=resolve;s.onerror=reject;document.body.append(s)});return instagramLoading}
+function loadInstagram(){if(window.instgrm)return Promise.resolve();if(!instagramLoading)instagramLoading=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://www.instagram.com/embed.js';s.async=true;s.onload=resolve;s.onerror=()=>{instagramLoading=undefined;s.remove();reject(new Error('Instagram embed unavailable'))};document.body.append(s)});return instagramLoading}
 function embed(url){const q=document.createElement('blockquote');q.className='instagram-media';q.dataset.instgrmPermalink=url;q.dataset.instgrmVersion='14';const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=englishUI?'View this post on Instagram ↗':'Instagramで投稿を見る ↗';q.append(a);return q}
-document.querySelectorAll('.load-post').forEach(button=>button.addEventListener('click',async()=>{const panel=button.closest('.post-preview');button.disabled=true;button.textContent=englishUI?'Loading…':'読み込み中…';try{await loadInstagram();panel.replaceWith(embed(button.dataset.post));window.instgrm?.Embeds.process()}catch{button.disabled=false;button.textContent=englishUI?'Try again':'再読み込み';const note=document.createElement('p');note.textContent=englishUI?'You can view the post directly on Instagram.':'Instagramで直接ご覧いただけます。';panel.append(note)}}));
+// Restore automatic official post embeds; their links remain if Instagram is unavailable.
+loadInstagram().then(()=>window.instgrm?.Embeds.process()).catch(()=>{});
 const details=document.getElementById('igAutoList');
 details.addEventListener('toggle',async()=>{if(!details.open||details.dataset.loaded)return;details.dataset.loaded='true';const body=document.getElementById('igAutoListBody');body.replaceChildren(embed('https://www.instagram.com/justice__naomi/'));try{await loadInstagram();window.instgrm?.Embeds.process()}catch{details.dataset.loaded='';}});
+
