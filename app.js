@@ -21,21 +21,9 @@ function updateBeams() {
 const beamResizeObserver = new ResizeObserver(updateBeams);beamResizeObserver.observe(hero);beamResizeObserver.observe(document.querySelector('.hero-stage'));portraitHero.addEventListener('change',updateBeams);landscapePhone.addEventListener('change',updateBeams);updateBeams();
 
 const englishUI=document.documentElement.lang==='en';
-const gallery=document.getElementById('igLargeViewport');
-const slides=[...gallery.querySelectorAll('.igLargeSlide')];
-const counter=document.getElementById('igSlideNumber');
-const prev=document.getElementById('igSlidePrev');
-const next=document.getElementById('igSlideNext');
-function currentIndex(){return Math.min(slides.length-1,Math.max(0,Math.round(gallery.scrollLeft/Math.max(1,gallery.clientWidth))))}
-function updateGallery(){const index=currentIndex();counter.textContent=`${index+1} / ${slides.length}`;prev.disabled=index===0;next.disabled=index===slides.length-1;slides.forEach((s,i)=>{s.inert=i!==index;s.setAttribute('aria-hidden',String(i!==index))})}
-function go(n){gallery.scrollTo({left:gallery.clientWidth*Math.min(slides.length-1,Math.max(0,currentIndex()+n)),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}
-prev.addEventListener('click',()=>go(-1));next.addEventListener('click',()=>go(1));gallery.addEventListener('scroll',updateGallery,{passive:true});
-window.addEventListener('resize',()=>{gallery.scrollTo({left:0,behavior:'instant'});updateGallery()});updateGallery();
 let instagramLoading;
 function loadInstagram(){if(window.instgrm)return Promise.resolve();if(!instagramLoading)instagramLoading=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://www.instagram.com/embed.js';s.async=true;s.onload=resolve;s.onerror=()=>{instagramLoading=undefined;s.remove();reject(new Error('Instagram embed unavailable'))};document.body.append(s)});return instagramLoading}
 function embed(url){const q=document.createElement('blockquote');q.className='instagram-media';q.dataset.instgrmPermalink=url;q.dataset.instgrmVersion='14';const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=englishUI?'View this post on Instagram ↗':'Instagramで投稿を見る ↗';q.append(a);return q}
-// Restore automatic official post embeds; their links remain if Instagram is unavailable.
-loadInstagram().then(()=>window.instgrm?.Embeds.process()).catch(()=>{});
 const details=document.getElementById('igAutoList');
 details.addEventListener('toggle',async()=>{if(!details.open||details.dataset.loaded)return;details.dataset.loaded='true';const body=document.getElementById('igAutoListBody');body.replaceChildren(embed('https://www.instagram.com/justice__naomi/'));try{await loadInstagram();window.instgrm?.Embeds.process()}catch{details.dataset.loaded='';}});
 

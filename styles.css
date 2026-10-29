@@ -99,7 +99,11 @@ footer{flex-wrap:wrap}footer p.footerCopyright{margin-left:auto;width:auto;font-
 /* Direct YouTube link remains available when embedded playback is restricted. */
 .introWatchLink{margin:0;padding:0 15px 15px;color:#ddd;font-size:10px;line-height:1.6}.introWatchLink a{text-decoration:underline;text-underline-offset:3px}
 
-/* Keep social cards within Instagram's native 540px embed width. */
-.socialColumns{max-width:1110px;margin-inline:auto;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
-@media(min-width:768px){.socialColumns>.socialCard:last-child{display:flex;flex-direction:column}.socialColumns>.socialCard:last-child .xContent{flex:1}.socialColumns>.socialCard:last-child .socialCardNote{flex:none}}
-@media(max-width:767px){.socialColumns{max-width:540px;grid-template-columns:minmax(0,1fr)}}
+/* Today's two views share one row, balanced with the compact X panel. */
+.socialColumns{max-width:1400px;margin-inline:auto;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}
+.igPhotoPair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.igPhotoPair a{display:block;min-width:0;background:#202020}
+.igPhotoPair img{display:block;width:100%;height:auto}
+.igPhotoPair span{display:block;padding:12px;font-size:10px;letter-spacing:.12em;color:#c7c7c2}
+.igPhotoPair a:focus-visible{outline:2px solid white;outline-offset:4px}
+@media(max-width:767px){.socialColumns{grid-template-columns:minmax(0,1fr)}.igPhotoPair{gap:8px}.igPhotoPair span{padding:10px;font-size:9px}}
