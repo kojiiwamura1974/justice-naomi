@@ -21,6 +21,11 @@
     normal:{label:"ふつう",quotas:[300,800,1500],hitScale:1},
     hard:{label:"むずかしい",quotas:[500,1300,2600],hitScale:.80}
   };
+  const MISS_VOICES=[["miss_oshii","おしいー。"],["miss_uso","うそー。"],["miss_maji","まじっ？"],["miss_nai","ないわー。"],["miss_tsugi","次はいけるっ！"]];
+  const HIT_VOICES=[["hit_yatta","やったやったー！"],["hit_omigoto","お見事！"],["hit_touzen","当然っ！"],["hit_tsugi","次も当てるっ！"],["hit_rakushou","楽勝っ！"]];
+  const DEEP_VOICE=["hit_justice","ジャスティスっ！"];
+  const RESULT_VOICES={loss:["endlost","うそー，信じられなーい．下手くそっ．"],win:["endwon","なかなかよかったよ．つぎもがんばって！"],high:["high","すっごーい，上手だねっ．"]};
+  const pick=clips=>clips[Math.floor(Math.random()*clips.length)];
   const $score=$("scoreVal"),$time=$("timeVal"),$best=$("bestVal"),$bearing=$("bearingVal");
   const $stage=$("stageLabel"),$target=$("quotaLabel"),$progress=$("stageProgress"),$toast=$("checkpointToast");
   const overlay=$("overlayScreen"),overlayTitle=$("overlayTitle"),overlayDesc=$("overlayDesc"),startBtn=$("startBtn");
@@ -37,8 +42,8 @@
   let elapsed=0,timeLeft=60,checkpointIndex=0,holdDir=0,reloadTimer=0,sinkingHold=0,gameSec=0,wavePhase=0;
   let ships=[],shots=[],sparks=[],smoke=[],rings=[];
   let frameLast=0,activePointer=null,lastPointerX=0;
-  let reactionExpires=0,toastExpires=0,shakeTime=0,flash=0,voiceTimer=0,lastMiss=-99;
-  let audio=null,flightAudio=null,pendingCheer=null,pendingResult=null,runNumber=0;
+  let reactionExpires=0,toastExpires=0,shakeTime=0,flash=0;
+  let audio=null,flightAudio=null,pendingCheer=null,pendingResult=null;
   try{best=Number(localStorage.getItem("naomi-submarine-best-v4")||0);}catch(e){best=0;}
 
   /* A dedicated deterministic generator. Cosmetic randomness and player hits
@@ -115,10 +120,12 @@
     toastExpires=performance.now()/1000+hold;
   }
   function startGame(){
+    stopVoice();
+    prepareVoice();
     stopFlightSound(.04);
-    state="playing";runNumber++;score=0;bearing=0;holdDir=0;elapsed=0;timeLeft=60;checkpointIndex=0;
+    state="playing";score=0;bearing=0;holdDir=0;elapsed=0;timeLeft=60;checkpointIndex=0;
     reloadTimer=0;sinkingHold=0;pendingCheer=null;pendingResult=null;gameSec=0;wavePhase=0;flash=0;shakeTime=0;
-    shots=[];sparks=[];smoke=[];rings=[];lastMiss=-99;
+    shots=[];sparks=[];smoke=[];rings=[];
     setupFleet();overlay.classList.remove("active");$toast.classList.remove("visible");
     updateHUD();updateFireControl();
     speak("いけー！　狙って，狙って！","happy",1.3);
@@ -139,21 +146,25 @@
     pendingResult=null;
     state="over";holdDir=0;stopFlightSound(.12);pendingCheer=null;updateFireControl();
     if(score>best){best=score;try{localStorage.setItem("naomi-submarine-best-v4",String(best));}catch(e){}}
-    const completed=reason==="complete",qualified=reason==="complete";
+    const completed=reason==="complete",qualified=completed;
+    // A high score is a completed run at 125% or more of the final quota.
+    const high=completed&&score>=Math.ceil(LEVELS[difficulty].quotas[2]*1.25);
+    const clip=RESULT_VOICES[high?"high":completed?"win":"loss"];
     if(reason==="quota"){
       overlayTitle.textContent="ここまで！";
       overlayDesc.innerHTML="20秒ごとの得点ノルマに届かなかった．<br>獲得 "+score+"点．もう一回いこう！";
-      speak("惜しい！　次はきっといけるよ！","sad",99);
+      speak(clip[1],"sad",99);
     }else{
       overlayTitle.textContent=completed?"60秒，完全クリア！":"60秒終了！";
       overlayDesc.innerHTML="最終スコア："+score+"点<br>"+(qualified?"全ステージ達成！":"またチャレンジしよう！")+"";
-      speak("60秒走りきったね！　すごーい！","happy",99);
+      speak(clip[1],"happy",99);
     }
     startBtn.textContent="もう100円！";
     overlay.classList.add("active");
     showStageMessage("",0);
     $toast.classList.remove("visible");
     updateHUD();sound(completed?"success":"end");
+    playVoice(clip[0]);
   }
   function onCheckpoint(){
     const deadline=(checkpointIndex+1)*20,target=LEVELS[difficulty].quotas[checkpointIndex];
@@ -212,27 +223,68 @@
         age:0,dur:rand(1.7,3.8),r:rand(10,22)*fx});
     }
     sound("boom"); // "ズガーンッ" starts only at the actual impact.
-    const lines=[
-      "やったー！　戦艦が沈む！",
-      "命中！　駆逐艦が割れた！",
-      "すごい！　潜水艦を見つけた！"
-    ];
-    // The explosion takes precedence over Naomi's speech for its first beat.
+    const clip=band.kind==="submarine"?DEEP_VOICE:pick(HIT_VOICES);
+    // Leave the first beat to the impact, including when a score gate stops play.
     naomi.setState("happy");
-    naomi.speechText.textContent=lines[ship.lane];
-    pendingCheer={at:elapsed+.85,line:lines[ship.lane],run:runNumber};
+    naomi.speechText.textContent=clip[1];
+    pendingCheer={delay:.85,clip};
     naomi.addFever(ship.lane===2?28:ship.lane===1?17:10);
     updateHUD();updateFireControl();
   }
   function audioContext(){
-    if(!prefs.isSeOn)return null;
     try{
       const AC=window.AudioContext||window.webkitAudioContext;
       if(!AC)return null;
       if(!audio)audio=new AC();
-      if(audio.state==="suspended")audio.resume();
+      if(audio.state==="suspended")audio.resume().catch(()=>{});
       return audio;
     }catch(err){return null;}
+  }
+  // Decode same-origin clips independently of SE. Resume the context directly
+  // in Start / Voice On handlers so deferred reactions also work on iOS.
+  const voiceBuffers=new Map(),voiceLoads=new Map();
+  let activeVoice=null,voiceGeneration=0;
+  function prepareVoice(){
+    if(!prefs.isVoiceOn)return;
+    const ac=audioContext();
+    if(!ac)return;
+    for(const [id] of [...MISS_VOICES,...HIT_VOICES,DEEP_VOICE,...Object.values(RESULT_VOICES)]){
+      if(voiceBuffers.has(id)||voiceLoads.has(id))continue;
+      const load=fetch("/games/submarine/voice/"+id+".mp3")
+        .then(response=>{
+          if(!response.ok)throw new Error("voice unavailable");
+          return response.arrayBuffer();
+        })
+        .then(bytes=>ac.decodeAudioData(bytes))
+        .then(buffer=>{voiceBuffers.set(id,buffer);return buffer;})
+        .catch(()=>null)
+        .finally(()=>voiceLoads.delete(id));
+      voiceLoads.set(id,load);
+    }
+  }
+  function stopVoice(){
+    voiceGeneration++;
+    if(activeVoice){
+      try{activeVoice.stop();}catch(e){}
+      activeVoice=null;
+    }
+  }
+  function playVoice(id){
+    stopVoice();
+    if(!prefs.isVoiceOn||!audio)return;
+    const ac=audio,generation=voiceGeneration,expires=performance.now()+650;
+    const start=buffer=>{
+      if(!buffer||generation!==voiceGeneration||!prefs.isVoiceOn||ac.state!=="running"||performance.now()>expires)return;
+      try{
+        const node=ac.createBufferSource(),gain=ac.createGain();
+        node.buffer=buffer;gain.gain.value=.85;
+        node.connect(gain);gain.connect(ac.destination);
+        node.onended=()=>{if(activeVoice===node)activeVoice=null;node.disconnect();gain.disconnect();};
+        node.start();activeVoice=node;
+      }catch(e){}
+    };
+    if(voiceBuffers.has(id))start(voiceBuffers.get(id));
+    else voiceLoads.get(id)?.then(start);
   }
   function noiseBuffer(ac,duration){
     const len=Math.floor(ac.sampleRate*duration);
@@ -248,6 +300,7 @@
   }
   function startFlightSound(){
     stopFlightSound(.03);
+    if(!prefs.isSeOn)return;
     const ac=audioContext();
     if(!ac)return;
     try{
@@ -286,6 +339,7 @@
     }catch(e){}
   }
   function sound(kind){
+    if(!prefs.isSeOn)return;
     const ac=audioContext();
     if(!ac)return;
     try{
@@ -343,6 +397,15 @@
     rings=rings.filter(p=>(p.age+=dt)<p.dur);
 
     updateFireControl();
+    if(pendingCheer){
+      pendingCheer.delay-=dt;
+      if(pendingCheer.delay<=0){
+        const [id,line]=pendingCheer.clip;
+        pendingCheer=null;
+        speak(line,"happy",2.7);
+        playVoice(id);
+      }
+    }
     // Sparks and smoke continue after the score gate while a hit finishes.
     if(state==="finishing"){
       if(sinkingHold<=.001)presentResult(pendingResult);
@@ -378,16 +441,14 @@
       if(shot.y<SEA_HORIZON-14){
         stopFlightSound(.22);
         reloadTimer=MISS_RELOAD;
-        if(now-lastMiss>3.1&&Math.random()<.65){lastMiss=now;speak("惜しい！　先を狙って！","sad",1.2);}
+        const [id,line]=pick(MISS_VOICES);
+        speak(line,"sad",1.2);
+        playVoice(id);
         return false;
       }
       return true;
     });
     elapsed=Math.min(60,elapsed+dt);timeLeft=Math.max(0,60-elapsed);
-    if(pendingCheer&&elapsed>=pendingCheer.at){
-      if(pendingCheer.run===runNumber&&state==="playing")speak(pendingCheer.line,"happy",2.7);
-      pendingCheer=null;
-    }
     if(elapsed >= (checkpointIndex+1)*20-1e-7)onCheckpoint();
     updateFireControl();
     settleMood(now);
@@ -708,7 +769,8 @@
     prefs.isVoiceOn=!prefs.isVoiceOn;
     voiceBtn.textContent=prefs.isVoiceOn?"🗣️ ボイス ON":"🤐 ボイス OFF";
     voiceBtn.classList.toggle("active",prefs.isVoiceOn);
-    if(!prefs.isVoiceOn&&window.speechSynthesis)window.speechSynthesis.cancel();
+    if(prefs.isVoiceOn)prepareVoice();
+    else stopVoice();
   });
   diffButtons.forEach(b=>b.addEventListener("click",()=>setDifficulty(b.dataset.difficulty)));
   fireBtn.addEventListener("click",fire);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>SUBMARINE — 尚美ともう100円！</title>
+<title>ジャスティスサブマリン | Justice Submarine</title>
 <style>
 :root {
   --bg-gradient: linear-gradient(135deg, #181126 0%, #29153a 50%, #3e1642 100%);
@@ -834,7 +834,7 @@ kbd {
 
 </style>
 <meta name="description" content="尚美が応援するエレメカ風サブマリンゲーム．潜望鏡を左右に動かして軍艦を狙おう．">
-<meta property="og:title" content="SUBMARINE — もう100円！ | PROJECT NAOMI">
+<meta property="og:title" content="ジャスティスサブマリン | Justice Submarine">
 <meta property="og:image" content="https://naomi.kozo-club.com/games/submarine/cover.svg">
 <link rel="icon" href="/assets/favicon.svg">
 <link rel="canonical" href="https://naomi.kozo-club.com/games/submarine/">
@@ -851,10 +851,10 @@ kbd {
 <nav class="naomi-game-breadcrumb" aria-label="ゲームのナビゲーション"><a href="/games/">← GAME MENU</a><a href="/">PROJECT NAOMI</a></nav>
 <header class="header">
   <div class="title-badge">⚓ JUSTICE NAOMI × ELE-MECHA ⚓</div>
-  <h1 class="game-title">SUBMARINE — もう100円！</h1>
+  <h1 class="game-title">ジャスティスサブマリン</h1>
 </header>
 <main class="main-content submarine-layout">
-<section class="submarine-panel" aria-label="エレメカ風サブマリン">
+<section class="submarine-panel" aria-label="ジャスティスサブマリン">
   <div class="machine-label"><span>SUBMARINE <b>PERISCOPE</b></span><span class="machine-lights"><i></i><i></i><i></i></span></div>
   <div class="scope-housing">
     <div class="scope-viewport" id="scopeViewport">
@@ -1002,7 +1002,6 @@ class NaomiCharacter {
     this.cutinImg = document.getElementById('cutinImg');
 
     this.fever = 0;
-    this.synth = window.speechSynthesis || null;
 
     this.initCostumeButtons();
     this.setState('normal');
@@ -1052,24 +1051,12 @@ class NaomiCharacter {
     this.imgElement.className = `char-img ${info.class}`;
   }
 
-  say(text, audioVoice = true) {
+  say(text) {
     this.speechText.textContent = text;
     this.speechBubble.classList.remove('speech-pop');
     void this.speechBubble.offsetWidth;
     this.speechBubble.classList.add('speech-pop');
 
-    if (audioVoice && this.sound.isVoiceOn && this.synth) {
-      try {
-        this.synth.cancel();
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = 'ja-JP';
-        utter.pitch = 1.25; // 明るく可愛いトーン
-        utter.rate = 1.12;  // 適度なテンポ
-        this.synth.speak(utter);
-      } catch (e) {
-        // 音声ブロック時は無視
-      }
-    }
   }
 
   triggerCutin(chainCount) {
@@ -1108,6 +1095,6 @@ class NaomiCharacter {
 // ==========================================
 
 </script>
-<script src="/games/submarine/game-v3.js?v=20261121-keyboard"></script>
+<script src="/games/submarine/game-v3.js?v=20261121-justice-voice"></script>
 </body>
 </html>
