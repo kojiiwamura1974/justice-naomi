@@ -406,60 +406,105 @@
       }
     }
   }
-  function shipSilhouette(){
-    ctx.fillStyle="#142333";ctx.beginPath();
-    ctx.moveTo(-71,-6);ctx.lineTo(-59,12);ctx.lineTo(41,12);ctx.lineTo(69,-7);ctx.lineTo(65,-11);ctx.lineTo(-65,-12);ctx.closePath();ctx.fill();
-    ctx.strokeStyle="#546a74";ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(-59,-10);ctx.lineTo(60,-10);ctx.stroke();
-    ctx.fillStyle="#1f3040";ctx.fillRect(-38,-24,69,16);ctx.fillRect(-15,-42,26,19);
-    ctx.fillRect(-42,-30,14,8);ctx.fillRect(16,-32,12,10);ctx.fillRect(35,-28,15,11);
-    ctx.fillStyle="#405468";ctx.fillRect(-10,-36,5,5);ctx.fillRect(1,-36,5,5);
-    ctx.strokeStyle="#324858";ctx.lineWidth=2;
-    ctx.beginPath();ctx.moveTo(-2,-42);ctx.lineTo(-2,-62);ctx.moveTo(35,-28);ctx.lineTo(35,-43);ctx.stroke();
+  function shipSilhouette(kind){
+    if(kind==="submarine"){
+      // The distant silhouette is almost swallowed by the horizon:
+      // long narrow dark hull, tiny conning tower and a barely-visible periscope.
+      ctx.fillStyle="#253d4a";
+      ctx.beginPath();ctx.moveTo(-66,-1);ctx.quadraticCurveTo(-63,-8,-47,-7);
+      ctx.lineTo(43,-7);ctx.quadraticCurveTo(62,-6,67,0);
+      ctx.lineTo(58,7);ctx.lineTo(-56,7);ctx.closePath();ctx.fill();
+      ctx.fillStyle="#263943";ctx.fillRect(-12,-21,21,16);
+      ctx.fillRect(-2,-27,4,8);
+      ctx.strokeStyle="#50606b";ctx.lineWidth=1.8;
+      ctx.beginPath();ctx.moveTo(-57,4);ctx.lineTo(60,4);ctx.stroke();
+      ctx.strokeStyle="rgba(175,208,220,.45)";ctx.lineWidth=2.5;
+      ctx.beginPath();ctx.moveTo(-90,5);ctx.lineTo(-69,4);
+      ctx.moveTo(64,4);ctx.lineTo(91,5);ctx.stroke();
+      return;
+    }
+    if(kind==="destroyer"){
+      // A low fast destroyer, sharp bow, small bridge, two thin smokestacks.
+      ctx.fillStyle="#172a3a";ctx.beginPath();
+      ctx.moveTo(-79,-6);ctx.lineTo(-66,10);ctx.lineTo(43,10);
+      ctx.lineTo(76,-6);ctx.lineTo(69,-9);ctx.lineTo(-71,-9);ctx.closePath();ctx.fill();
+      ctx.fillStyle="#203346";ctx.fillRect(-27,-20,52,13);
+      ctx.fillRect(-17,-35,20,16);
+      ctx.fillRect(22,-29,8,15);ctx.fillRect(36,-26,7,13);
+      ctx.fillRect(-49,-22,12,12);ctx.fillRect(49,-20,12,11);
+      ctx.strokeStyle="#6e7e85";ctx.lineWidth=2;ctx.beginPath();
+      ctx.moveTo(-5,-36);ctx.lineTo(-5,-53);
+      ctx.moveTo(-52,-11);ctx.lineTo(-59,-16);
+      ctx.moveTo(56,-10);ctx.lineTo(67,-16);ctx.stroke();
+      ctx.strokeStyle="#3b5666";ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(-69,-8);ctx.lineTo(68,-8);ctx.stroke();
+      return;
+    }
+    // Battleship: multiple heavy gun turrets, twin masts, armored bridge.
+    ctx.fillStyle="#182b3c";ctx.beginPath();
+    ctx.moveTo(-80,-7);ctx.lineTo(-62,13);ctx.lineTo(49,13);
+    ctx.lineTo(82,-9);ctx.lineTo(75,-13);ctx.lineTo(-72,-13);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#263c4e";ctx.fillRect(-38,-28,80,16);
+    ctx.fillRect(-20,-50,31,23);ctx.fillRect(-14,-63,17,14);
+    ctx.fillRect(-64,-27,21,15);ctx.fillRect(49,-27,19,14);
+    ctx.fillRect(-48,-31,11,10);ctx.fillRect(39,-30,14,10);
+    ctx.strokeStyle="#586978";ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(-60,-26);ctx.lineTo(-88,-28);
+    ctx.moveTo(-60,-22);ctx.lineTo(-88,-24);
+    ctx.moveTo(62,-25);ctx.lineTo(93,-29);
+    ctx.moveTo(62,-22);ctx.lineTo(93,-25);
+    ctx.stroke();
+    ctx.strokeStyle="#506676";ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(-2,-62);ctx.lineTo(-2,-84);
+    ctx.moveTo(22,-28);ctx.lineTo(22,-61);ctx.stroke();
+    ctx.fillStyle="#415b6b";ctx.fillRect(-15,-45,9,5);ctx.fillRect(-2,-45,9,5);
+    ctx.strokeStyle="#77909d";ctx.lineWidth=1.3;ctx.beginPath();
+    ctx.moveTo(-69,-12);ctx.lineTo(73,-12);ctx.stroke();
   }
   function drawSplitShip(ship){
     const band=BANDS[ship.lane],sx=project(ship.wx);
     if(sx<-150||sx>W+150)return;
     const dir=band.speed>0?1:-1,scale=band.scale;
-    const p=clamp((3.45-ship.dead)/3.45,0,1);
-    const sink=Math.pow(p,1.5)*205,gap=p*29;
+    const p=clamp((SINK_SECONDS-ship.dead)/SINK_SECONDS,0,1);
+    const sinking=clamp((p-.17)/.83,0,1);
+    const sink=Math.pow(sinking,1.23)*205;
+    const separation=Math.pow(p,1.05)*34;
     const bob=Math.sin(wavePhase*2+ship.phase)*1.3;
-    // Two separate hull pieces tilt, slide apart, and go under the surface.
     ctx.save();ctx.translate(sx,band.y+bob);ctx.scale(dir*scale,scale);
+    // The first beat is a stationary rupture, then the two pieces roll apart.
     for(const side of [-1,1]){
-      ctx.save();ctx.translate(side*gap,sink+(side<0?6:0)*p);
-      ctx.rotate(side*(.08+p*.58));
-      ctx.fillStyle="#192a38";
-      ctx.beginPath();
-      if(side<0){
-        ctx.moveTo(-71,-6);ctx.lineTo(-59,12);ctx.lineTo(-8,12);ctx.lineTo(-10,-10);
-        ctx.lineTo(-65,-12);ctx.closePath();ctx.fill();
-        ctx.fillStyle="#243848";ctx.fillRect(-39,-23,26,14);
-        ctx.fillRect(-34,-30,11,8);
-      }else{
-        ctx.moveTo(9,-11);ctx.lineTo(65,-11);ctx.lineTo(69,-7);ctx.lineTo(41,12);ctx.lineTo(10,12);
-        ctx.closePath();ctx.fill();
-        ctx.fillStyle="#243848";ctx.fillRect(14,-23,19,14);
-        ctx.fillRect(35,-28,15,11);
-      }
-      ctx.strokeStyle="#a56c4f";ctx.lineWidth=3;
-      ctx.beginPath();ctx.moveTo(side<0?-10:9,-12);ctx.lineTo(side<0?-8:10,12);ctx.stroke();
+      ctx.save();
+      ctx.translate(side*separation,sink+Math.sin(p*8+side)*4*p);
+      ctx.rotate(side*(.05+Math.pow(sinking,.9)*.66));
+      ctx.beginPath();ctx.rect(side<0?-100:0,-110,100,150);ctx.clip();
+      shipSilhouette(band.kind);
       ctx.restore();
     }
-    // Orange light remains in the split seam as it sinks.
-    if(p<.68){
-      ctx.fillStyle="rgba(255,174,64,"+(1-p/.68)*.8+")";
-      ctx.beginPath();ctx.ellipse(0,sink-10,13+11*p,30*(1-p),0,0,Math.PI*2);ctx.fill();
+    if(sinking<.82){
+      const light=clamp((.82-sinking)/.82,0,1)*.77;
+      ctx.fillStyle="rgba(255,162,68,"+light+")";
+      ctx.shadowColor="#ff9e40";ctx.shadowBlur=25;
+      ctx.beginPath();ctx.ellipse(0,sink-16,16+12*p,22*(1-p)+3,0,0,Math.PI*2);ctx.fill();
+      ctx.shadowBlur=0;
     }
+    // Surface boils longer than the initial explosion.
+    ctx.strokeStyle="rgba(175,214,224,"+(1-p)*.38+")";
+    ctx.lineWidth=3.4;ctx.beginPath();
+    ctx.ellipse(0,12,28+92*p,6+12*p,0,0,Math.PI*2);ctx.stroke();
     ctx.restore();
   }
   function drawShip(ship){
     if(ship.dead>0){drawSplitShip(ship);return;}
     const band=BANDS[ship.lane],x=project(ship.wx);
     if(x<-150||x>W+150)return;
-    ctx.save();ctx.translate(x,band.y+Math.sin(wavePhase*2+ship.phase)*1.5);
+    ctx.save();
+    ctx.globalAlpha=band.kind==="submarine"?.48:band.kind==="destroyer"?.80:.92;
+    ctx.translate(x,band.y+Math.sin(wavePhase*2+ship.phase)*1.1);
     ctx.scale((band.speed>0?1:-1)*band.scale,band.scale);
-    ctx.fillStyle="#0a233137";ctx.beginPath();ctx.ellipse(-3,14,89,8,0,0,Math.PI*2);ctx.fill();
-    shipSilhouette();
+    ctx.fillStyle="rgba(13,37,49,.2)";
+    ctx.beginPath();ctx.ellipse(-4,11,92,5,0,0,Math.PI*2);ctx.fill();
+    shipSilhouette(band.kind);
     ctx.restore();
   }
   function drawShot(t){
@@ -475,32 +520,33 @@
   function drawDestruction(){
     ctx.save();
     rings.forEach(p=>{
-      const f=p.age/p.dur,x=project(p.wx);
-      ctx.globalAlpha=(1-f)*.94;
-      ctx.lineWidth=5*(1-f)+1.5;ctx.strokeStyle="#ffe5a6";
-      ctx.shadowColor="#ff8e44";ctx.shadowBlur=23;
-      ctx.beginPath();ctx.ellipse(x,p.y,18+80*f,10+47*f,0,0,Math.PI*2);ctx.stroke();
+      if(p.age<0)return;
+      const f=clamp(p.age/p.dur,0,1),x=project(p.wx);
+      ctx.globalAlpha=(1-f)*.92;ctx.lineWidth=(5*(1-f)+1)*p.fx;
+      ctx.strokeStyle="#ffe8bd";ctx.shadowColor="#ff9e58";ctx.shadowBlur=24;
+      ctx.beginPath();ctx.ellipse(x,p.y,(16+108*f)*p.fx,(7+59*f)*p.fx,0,0,Math.PI*2);ctx.stroke();
     });
     sparks.forEach(p=>{
       const f=p.age/p.dur,x=project(p.wx);
-      ctx.globalAlpha=(1-f)*.99;ctx.fillStyle=Math.sin(p.age*20)>.2?"#fff1aa":"#ec7a42";
-      ctx.shadowColor="#ff8e52";ctx.shadowBlur=15;
+      ctx.globalAlpha=Math.pow(1-f,.9)*.98;
+      ctx.fillStyle=f<.5?"#fff0ad":"#e87c4c";
+      ctx.shadowColor="#ff9c57";ctx.shadowBlur=16;
       ctx.beginPath();ctx.arc(x,p.y,p.r*(1-f*.6),0,Math.PI*2);ctx.fill();
     });
     smoke.forEach(p=>{
       const f=p.age/p.dur,x=project(p.wx);
-      ctx.globalAlpha=(1-f)*.44;
-      ctx.fillStyle=f<.27?"#ad7760":"#172331";
-      ctx.shadowBlur=5;ctx.shadowColor="#0c1018";
-      ctx.beginPath();ctx.arc(x,p.y,p.r*(1+f*.9),0,Math.PI*2);ctx.fill();
+      ctx.globalAlpha=(1-f)*.47;
+      ctx.fillStyle=f<.25?"#ad8068":"#152735";
+      ctx.shadowBlur=9;ctx.shadowColor="#111720";
+      ctx.beginPath();ctx.arc(x,p.y,p.r*(1+f*1.2),0,Math.PI*2);ctx.fill();
     });
     boomWords.forEach(p=>{
-      const f=p.age/p.dur,x=project(p.wx);
-      ctx.globalAlpha=(1-f)*.98;
-      ctx.font="900 "+Math.floor(33+f*18)+"px system-ui,sans-serif";
-      ctx.textAlign="center";ctx.lineWidth=5;ctx.strokeStyle="#501e0d";
-      ctx.strokeText("ズガーンッ！",x,p.y-35*f);
-      ctx.fillStyle="#ffe3a4";ctx.fillText("ズガーンッ！",x,p.y-35*f);
+      const f=clamp(p.age/p.dur,0,1),x=project(p.wx);
+      ctx.globalAlpha=Math.pow(1-f,.8);
+      ctx.font="900 "+Math.floor((32+f*13)*p.fx)+"px system-ui,sans-serif";
+      ctx.textAlign="center";ctx.lineWidth=5*p.fx;ctx.strokeStyle="#4d2519";
+      ctx.strokeText("ズガーンッ！",x,p.y-26*f);
+      ctx.fillStyle="#ffe0ad";ctx.fillText("ズガーンッ！",x,p.y-26*f);
     });
     ctx.restore();
   }
