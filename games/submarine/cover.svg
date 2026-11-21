@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">SUBMARINE — もう100円！</title>
+<desc id="desc">レトロな潜望鏡を覗くと海面に軍艦と魚雷の光が見える</desc>
+<defs>
+<linearGradient id="back" x2="0" y2="1"><stop stop-color="#1b3c52"/><stop offset="1" stop-color="#081321"/></linearGradient>
+<linearGradient id="sky" x2="0" y2="1"><stop stop-color="#192340"/><stop offset=".63" stop-color="#834b60"/><stop offset="1" stop-color="#f4b779"/></linearGradient>
+<linearGradient id="sea" x2="0" y2="1"><stop stop-color="#0c5b76"/><stop offset=".65" stop-color="#174c67"/><stop offset="1" stop-color="#0b2b4b"/></linearGradient>
+<radialGradient id="glass"><stop offset=".67" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#02070e" stop-opacity=".84"/></radialGradient>
+<linearGradient id="fire" x2="0" y2="1"><stop stop-color="#fffad1"/><stop offset=".45" stop-color="#ffca76"/><stop offset="1" stop-color="#ff7b46" stop-opacity="0"/></linearGradient>
+<clipPath id="view"><circle cx="545" cy="320" r="253"/></clipPath>
+<filter id="glow"><feGaussianBlur stdDeviation="10"/></filter>
+</defs>
+<rect width="1200" height="675" fill="url(#back)"/>
+<g opacity=".6" stroke="#80a1ad" stroke-width="2"><path d="M0 55H1200M0 620H1200" opacity=".18"/><path d="M40 0V675M1160 0V675" opacity=".1"/></g>
+<circle cx="545" cy="320" r="275" fill="#0a121e" stroke="#7c95a1" stroke-width="22"/>
+<circle cx="545" cy="320" r="266" fill="none" stroke="#152a3c" stroke-width="9"/>
+<g clip-path="url(#view)">
+<rect x="280" y="60" width="530" height="273" fill="url(#sky)"/>
+<path d="M260 278Q550 267 830 278V594H260Z" fill="url(#sea)"/>
+<g stroke="#8ee0da" stroke-width="2" opacity=".38">
+<path d="M290 315h92m48 18h175m40-12h98m-440 47h133m46 6h216m-390 37h145m56-5h170m-433 52h190m48-8h140m-391 47h122m65-14h210"/>
+</g>
+<g fill="#182638" stroke="#496073" stroke-width="2">
+<path d="M410 286h160l-17 26H423Z"/><path d="M450 273h80v14h-80Z"/><path d="M471 256h36v18h-36Z"/><path d="M484 240v16M515 251v23" fill="none"/>
+<path d="M638 320h142l-25 27H656Z"/><path d="M676 302h62v19h-62Z"/><path d="M699 286h22v18h-22Z"/>
+</g>
+<path d="M546 509L546 354" stroke="#ffe7a7" stroke-width="18" stroke-linecap="round" opacity=".48" filter="url(#glow)"/>
+<path d="M546 514L546 356" stroke="url(#fire)" stroke-width="8" stroke-linecap="round"/>
+<g stroke="#f8e7b1" stroke-width="3" opacity=".86" fill="none">
+<circle cx="545" cy="317" r="21"/><path d="M545 238V293M545 341V397M466 317H521M569 317H624"/>
+</g>
+<rect x="280" y="60" width="530" height="520" fill="url(#glass)"/>
+</g>
+<circle cx="545" cy="320" r="253" fill="none" stroke="#040b12" stroke-width="17"/>
+<circle cx="545" cy="320" r="267" fill="none" stroke="#b0b7ac" stroke-width="4"/>
+<g fill="#83929a" stroke="#25323d" stroke-width="2">
+<circle cx="545" cy="48" r="6"/><circle cx="817" cy="320" r="6"/><circle cx="545" cy="592" r="6"/><circle cx="273" cy="320" r="6"/>
+</g>
+<g font-family="'Helvetica Neue',Arial,sans-serif">
+<text x="907" y="177" font-size="21" letter-spacing="5" font-weight="700" fill="#e8c889">PROJECT NAOMI</text>
+<text x="906" y="259" font-size="72" font-weight="900" letter-spacing="-3" fill="#fff5df">SUB</text>
+<text x="906" y="327" font-size="69" font-weight="900" letter-spacing="-3" fill="#fff5df">MARINE</text>
+<path d="M908 364H1148" stroke="#e9c58a" stroke-width="3"/>
+<text x="909" y="417" font-size="23" font-weight="700" fill="#f3c9ad" letter-spacing="4">もう100円！</text>
+<text x="910" y="470" font-size="17" fill="#b8c5cc">PERISCOPE ARCADE</text>
+<text x="911" y="496" font-size="17" fill="#b8c5cc">WITH JUSTICE NAOMI</text>
+</g>
+<rect x="40" y="45" width="144" height="42" rx="21" fill="#0b1b2b" stroke="#e1be7c"/>
+<text x="112" y="72" fill="#f7e5bd" text-anchor="middle" font-size="17" font-family="Arial,sans-serif" font-weight="800" letter-spacing="2">GAME 01</text>
+<path d="M0 630H1200" stroke="#698394" opacity=".35"/>
+</svg>
