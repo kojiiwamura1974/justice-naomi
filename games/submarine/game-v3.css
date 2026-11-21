@@ -47,3 +47,8 @@
 .submarine-panel .fire-btn:not(:disabled){animation:fire-ready-breath 2.8s ease-in-out infinite}
 @keyframes fire-ready-breath{0%,100%{box-shadow:0 5px 0 #721b1d,0 0 10px #fc67402b}50%{box-shadow:0 5px 0 #721b1d,0 0 21px #fc674044}}
 @media(prefers-reduced-motion:reduce){.submarine-panel .fire-btn:not(:disabled){animation:none}}
+
+
+/* Progress milestones stay ABOVE the center of the scope, so they never obscure sinking wrecks. */
+.scope-viewport .checkpoint-toast{top:13%;min-width:min(80%,280px);padding:9px 12px;font-size:clamp(13px,1.8vw,19px);background:rgba(8,18,27,.87)}
+@media(max-width:640px){.scope-viewport .checkpoint-toast{top:16%;padding:6px 8px;font-size:12px;min-width:0;width:75%}}
