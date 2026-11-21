@@ -120,7 +120,7 @@
     reloadTimer=0;sinkingHold=0;pendingCheer=null;gameSec=0;wavePhase=0;flash=0;shakeTime=0;
     shots=[];sparks=[];smoke=[];rings=[];boomWords=[];lastMiss=-99;
     setupFleet();overlay.classList.remove("active");$toast.classList.remove("visible");
-    updateHUD();
+    updateHUD();updateFireControl();
     speak("いけー！　狙って，狙って！","happy",1.3);
     sound("start");
   }
