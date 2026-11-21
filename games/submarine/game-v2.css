@@ -1,0 +1,41 @@
+/* 2026-11-21 SUBMARINE v2: rectangular magnifying sight, original Naomi right side untouched */
+.submarine-panel{background:linear-gradient(147deg,#253747,#101b28 66%,#0b141d);border-color:#576975}
+.scope-housing{padding:8px;background:linear-gradient(160deg,#273643,#131d27 58%,#0d151e);border:3px solid #85929b;border-radius:16px;box-shadow:inset 0 0 0 3px #0b131c,inset 0 0 22px #000b,0 4px 0 #060c12}
+.scope-viewport{border-radius:8px;background:#050a12;box-shadow:inset 0 0 45px #000}
+.glass-glare{border-radius:8px;background:linear-gradient(135deg,rgba(236,243,255,.08),transparent 26%),radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.55) 97%);mix-blend-mode:screen}
+.scope-viewport #seaCanvas{cursor:grab}
+.scope-viewport #seaCanvas.dragging{cursor:grabbing}
+.stage-status{margin:0 2px 7px;border:1px solid #3b5466;border-radius:7px;padding:7px 11px 9px;background:#091521;color:#e8dbbf}
+.stage-state{display:flex;justify-content:space-between;align-items:center;gap:12px;font:800 12px/1.45 ui-monospace,monospace;letter-spacing:.055em}
+.stage-state #stageLabel{color:#f2cb87}
+.stage-state #quotaLabel{color:#d7e1e0;font-size:11px;text-align:right}
+.stage-progress{margin-top:7px;height:5px;border-radius:99px;background:#23384b;overflow:hidden}
+.stage-progress span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#ae8b57,#ffd898);transition:width .12s linear}
+.checkpoint-toast{position:absolute;z-index:7;left:50%;top:50%;transform:translate(-50%,-50%) scale(.93);opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;background:#08121bd9;color:#ffe1a0;text-shadow:0 3px 10px #000;border:2px solid #dcb577;border-radius:12px;box-shadow:0 0 25px #000b;padding:15px 20px;text-align:center;min-width:min(85%,330px);font:900 clamp(16px,2.8vw,27px)/1.4 system-ui,sans-serif;white-space:normal}
+.checkpoint-toast.visible{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.difficulty-box{display:flex;align-items:center;justify-content:center;gap:12px;padding:6px 3px 8px;flex-wrap:wrap}
+.difficulty-title{font:800 11px ui-monospace,monospace;letter-spacing:.06em;color:#c5cdd2}
+.difficulty-buttons{display:flex;gap:4px;align-items:center}
+.difficulty-btn{cursor:pointer;appearance:none;background:#152636;color:#d5e2e6;border:1px solid #587082;border-radius:5px;padding:8px 12px;font-size:12px;font-weight:800;line-height:1.2;min-height:34px;transition:background .15s}
+.difficulty-btn:hover:not(:disabled){background:#324c61;color:#fff}
+.difficulty-btn.selected{background:#d3a66b;color:#18202a;border-color:#f1cc98;box-shadow:0 0 9px #d3a66b48}
+.difficulty-btn:disabled{opacity:.64;cursor:not-allowed}
+.difficulty-btn.selected:disabled{opacity:1}
+.difficulty-btn:focus-visible{outline:2px solid #ffe4b4;outline-offset:3px}
+.scope-help{padding-bottom:5px}
+.submarine-options{padding-top:8px}
+.submarine-panel .machine-label{padding-bottom:7px}
+.scope-overlay-inner{position:relative}
+.scope-overlay-inner>p{font-size:12px;line-height:1.65}
+@media(max-width:760px){
+  .scope-housing{padding:5px}
+  .stage-state{font-size:10px}.stage-state #quotaLabel{font-size:10px}
+  .difficulty-box{gap:8px}.difficulty-buttons{gap:4px}
+  .difficulty-btn{font-size:11px;padding:7px 9px;min-height:35px}
+}
+@media(max-width:375px){
+  .stage-state{flex-wrap:wrap;gap:3px}
+  .stage-state #quotaLabel{text-align:left}
+  .difficulty-title{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.checkpoint-toast,.stage-progress span{transition:none}}
