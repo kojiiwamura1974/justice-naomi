@@ -38,7 +38,7 @@
   let ships=[],shots=[],sparks=[],smoke=[],rings=[],boomWords=[];
   let frameLast=0,activePointer=null,lastPointerX=0;
   let reactionExpires=0,toastExpires=0,shakeTime=0,flash=0,voiceTimer=0,lastMiss=-99;
-  let audio=null,flightAudio=null,pendingCheer=null,runNumber=0;
+  let audio=null,flightAudio=null,pendingCheer=null,pendingResult=null,runNumber=0;
   try{best=Number(localStorage.getItem("naomi-submarine-best-v4")||0);}catch(e){best=0;}
 
   /* A dedicated deterministic generator. Cosmetic randomness and player hits
@@ -86,11 +86,11 @@
       const selected=b.dataset.difficulty===difficulty;
       b.classList.toggle("selected",selected);
       b.setAttribute("aria-pressed",String(selected));
-      b.disabled=state==="playing";
+      b.disabled=state==="playing"||state==="finishing";
     });
   }
   function setDifficulty(mode){
-    if(state==="playing"||!LEVELS[mode])return;
+    if(state==="playing"||state==="finishing"||!LEVELS[mode])return;
     difficulty=mode;
     checkpointIndex=0;elapsed=0;timeLeft=60;
     updateHUD();
@@ -117,7 +117,7 @@
   function startGame(){
     stopFlightSound(.04);
     state="playing";runNumber++;score=0;bearing=0;holdDir=0;elapsed=0;timeLeft=60;checkpointIndex=0;
-    reloadTimer=0;sinkingHold=0;pendingCheer=null;gameSec=0;wavePhase=0;flash=0;shakeTime=0;
+    reloadTimer=0;sinkingHold=0;pendingCheer=null;pendingResult=null;gameSec=0;wavePhase=0;flash=0;shakeTime=0;
     shots=[];sparks=[];smoke=[];rings=[];boomWords=[];lastMiss=-99;
     setupFleet();overlay.classList.remove("active");$toast.classList.remove("visible");
     updateHUD();updateFireControl();
@@ -126,6 +126,17 @@
   }
   function endGame(reason){
     if(state!=="playing")return;
+    if(sinkingHold>.04){
+      // Gameplay stops at the exact 20/40/60-second gate. Only the ship's
+      // remaining sinking animation plays; its result overlay waits quietly.
+      state="finishing";pendingResult=reason;holdDir=0;
+      stopFlightSound(.12);updateFireControl();updateHUD();return;
+    }
+    presentResult(reason);
+  }
+  function presentResult(reason){
+    if(state!=="playing"&&state!=="finishing")return;
+    pendingResult=null;
     state="over";holdDir=0;stopFlightSound(.12);pendingCheer=null;updateFireControl();
     if(score>best){best=score;try{localStorage.setItem("naomi-submarine-best-v4",String(best));}catch(e){}}
     const completed=reason==="complete",qualified=reason==="complete";
@@ -155,9 +166,12 @@
     checkpointIndex++;
     const next=LEVELS[difficulty].quotas[checkpointIndex];
     showStageMessage("STAGE CLEAR!　次は "+next+"点",1.9);
-    naomi.triggerCutin(checkpointIndex===1?1:3);
-    speak("やった！　次の20秒もいけるよ！","happy",1.7);
-    sound("success");updateHUD();
+    // The ship sinking stays visible. No fullscreen character cut-in here.
+    if(sinkingHold<=.05){
+      speak("やった！　次の20秒もいけるよ！","happy",1.7);
+      sound("success");
+    }
+    updateHUD();
   }
   function updateFireControl(){
     const travelling=shots.length>0;
@@ -329,7 +343,12 @@
     rings=rings.filter(p=>(p.age+=dt)<p.dur);
     boomWords=boomWords.filter(p=>(p.age+=dt)<p.dur);
     updateFireControl();
-    // Sparks and smoke continue during the end state, but firing is disabled.
+    // Sparks and smoke continue after the score gate while a hit finishes.
+    if(state==="finishing"){
+      if(sinkingHold<=.001)presentResult(pendingResult);
+      if(now>=toastExpires)$toast.classList.remove("visible");
+      return;
+    }
     if(state!=="playing"){
       if(now>=toastExpires)$toast.classList.remove("visible");
       return;
