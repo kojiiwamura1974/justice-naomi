@@ -1,3 +1,9 @@
+/games /games/ 301
+/games/submarine /games/submarine/ 301
+/en/games /en/games/ 301
+/games/ /games/index.html 200
+/games/submarine/ /games/submarine/index.html 200
+/en/games/ /en/games/index.html 200
 /prototype /prototype/ 301
 /prototype/* /prototype/:splat 200
 /en /en/ 301
