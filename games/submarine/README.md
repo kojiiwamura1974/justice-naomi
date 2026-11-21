@@ -6,8 +6,11 @@ Official game path: /games/submarine/
 - Existing photographic Naomi portraits and NaomiCharacter class remain unchanged.
 - Rectangular softly rounded 1.17x periscope lens; the sea outside the lens remains visible, but dim.
 - Steering with drag, left/right buttons, or arrow keys. The center reticle stays fixed.
-- Torpedoes travel at 172 canvas units/sec, roughly 1–1.5 seconds to the three ship lanes. Distant fast, small vessels require prediction.
-- Hits produce layered booming sound, shockwave, smoke, splitting hull pieces, and sinking animation.
+- The three targets are a smaller near battleship (100), mid-distance destroyer (200), and tiny, dim submarine almost hidden against the far horizon (500). Fleet positions and speeds are identical across difficulty levels.
+- Exactly one torpedo may travel at a time. A sustained air-pressure "pshuuuuu" hiss continues from launch until the shot hits or misses; there is no quick launch "pop".
+- Torpedoes travel at 116 canvas units/sec, around 1.3–2.2 seconds to the three lanes. Misses require another 1.55 seconds to reload. The far submarine is deliberately hard to lead.
+- Impact abruptly transitions the prolonged hiss into a deep, decaying "zugaan" boom (roughly 2.7s noise tail). A hit locks the gun through the entire five-second split, fire, smoke and sinking animation. The next shot is not rushed. Naomi speaks after an initial 0.85s to let the explosion be heard.
+- Stage notifications stay near the top, and fullscreen cut-ins do not cover the wreck. If the 20/40/60-second score gate arrives during a sinking sequence, gameplay stops on time and only the remaining aftermath runs before the final score overlay.
 - No extra time. Three checkpoints at 20, 40, and 60 seconds, with early termination if a quota is missed. At 60 seconds the run always ends.
 
 ## Difficulty
@@ -21,11 +24,11 @@ The opening ship positions and travel directions/speeds are identical across dif
 
 ## Files
 - index.html: game and original Naomi portraits
-- game-v2.js: controls, ships, projectile and stage logic
-- game-v2.css: scoped UI styles
+- game-v3.js: small warship silhouettes, torpedo flight hiss, layered explosion, single-shot and 5s afterglow
+- game-v3.css: scoped UI styles and FIRE disabled states
 - cover.svg: thumbnail used on the official site and game archive
 
 ## Validation
 - JS parsed successfully.
-- State tests exercised 20s fail, 20s pass, 40s pass, 60s successful end, differing thresholds, and deterministic same fleet across difficulties.
+- State tests exercised sound order (hiss -> impact boom), one-shot-only, five-second afterglow/reload, 20s fail and 20/40/60s success, differing thresholds, and deterministic same fleet across difficulties.
 - Cloudflare preview serves the HTML, JS, CSS and cover. Human visual/audio testing is still recommended for tuning.
