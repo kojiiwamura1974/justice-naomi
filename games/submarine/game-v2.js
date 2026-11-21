@@ -559,5 +559,5 @@
   diffButtons.forEach(b=>b.addEventListener("click",()=>setDifficulty(b.dataset.difficulty)));
   fireBtn.addEventListener("click",fire);
   startBtn.addEventListener("click",startGame);
-  setupFleet();updateHUD();requestAnimationFrame(loop);
+  setupFleet();setDifficulty("normal");requestAnimationFrame(loop);
 })();
