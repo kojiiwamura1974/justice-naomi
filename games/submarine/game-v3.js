@@ -1,6 +1,6 @@
 /* SUBMARINE v3 — ELE-MECHA. A long air-pressure hiss accompanies each single
-   torpedo until impact; then a resonant boom and 5s of sinking afterglow.
-   Small battleships, destroyers, and nearly-hidden submarines share the same
+   torpedo until impact; then a resonant boom and 3.5s of sinking afterglow.
+   Small battleships, destroyers, and distant submarines share the same
    deterministic fleet across all difficulties. Naomi assets are untouched. */
 (() => {
   "use strict";
@@ -10,7 +10,7 @@
   const VIEW={x:102,y:62,w:756,h:476,r:32,zoom:1.17};
   const TORPEDO_SPEED=116;       // one long "プシューーー…" to the target
   const MISS_RELOAD=1.55;        // no firing while a shot is travelling
-  const SINK_SECONDS=5.0;       // savor the split / burn / slow sinking
+  const SINK_SECONDS=3.5;       // savor the split / burn / slow sinking
   const BANDS=[
     {y:398,scale:.65,speed:37,points:100,kind:"battleship"},
     {y:338,scale:.39,speed:-53,points:200,kind:"destroyer"},
@@ -147,18 +147,17 @@
     state="over";holdDir=0;stopFlightSound(.12);pendingCheer=null;updateFireControl();
     if(score>best){best=score;try{localStorage.setItem("naomi-submarine-best-v4",String(best));}catch(e){}}
     const completed=reason==="complete",qualified=completed;
-    // A high score is a completed run at 125% or more of the final quota.
-    const high=completed&&score>=Math.ceil(LEVELS[difficulty].quotas[2]*1.25);
-    const clip=RESULT_VOICES[high?"high":completed?"win":"loss"];
+    // The index counts cleared gates before the final one, even after a quota miss.
+    const reaction=checkpointIndex>=2?"high":checkpointIndex===1?"win":"loss";
+    const clip=RESULT_VOICES[reaction];
     if(reason==="quota"){
       overlayTitle.textContent="ここまで！";
       overlayDesc.innerHTML="20秒ごとの得点ノルマに届かなかった．<br>獲得 "+score+"点．もう一回いこう！";
-      speak(clip[1],"sad",99);
     }else{
       overlayTitle.textContent=completed?"60秒，完全クリア！":"60秒終了！";
       overlayDesc.innerHTML="最終スコア："+score+"点<br>"+(qualified?"全ステージ達成！":"またチャレンジしよう！")+"";
-      speak(clip[1],"happy",99);
     }
+    speak(clip[1],reaction==="loss"?"sad":"happy",99);
     startBtn.textContent="もう100円！";
     overlay.classList.add("active");
     showStageMessage("",0);
@@ -488,15 +487,16 @@
   }
   function shipSilhouette(kind){
     if(kind==="submarine"){
-      // The distant silhouette is almost swallowed by the horizon:
-      // long narrow dark hull, tiny conning tower and a barely-visible periscope.
-      ctx.fillStyle="#253d4a";
+      // Keep the same distant silhouette and strengthen its edge against the horizon.
+      ctx.fillStyle="#0a2534";
+      ctx.strokeStyle="#b8d6df";ctx.lineWidth=3.5;
       ctx.beginPath();ctx.moveTo(-66,-1);ctx.quadraticCurveTo(-63,-8,-47,-7);
       ctx.lineTo(43,-7);ctx.quadraticCurveTo(62,-6,67,0);
-      ctx.lineTo(58,7);ctx.lineTo(-56,7);ctx.closePath();ctx.fill();
-      ctx.fillStyle="#263943";ctx.fillRect(-12,-21,21,16);
-      ctx.fillRect(-2,-27,4,8);
-      ctx.strokeStyle="#50606b";ctx.lineWidth=1.8;
+      ctx.lineTo(58,7);ctx.lineTo(-56,7);ctx.closePath();ctx.fill();ctx.stroke();
+      ctx.fillStyle="#193e50";ctx.fillRect(-12,-21,21,16);
+      ctx.strokeRect(-12,-21,21,14);
+      ctx.fillStyle="#b8d6df";ctx.fillRect(-2,-27,4,6);
+      ctx.strokeStyle="#5e8593";ctx.lineWidth=2;
       ctx.beginPath();ctx.moveTo(-57,4);ctx.lineTo(60,4);ctx.stroke();
       ctx.strokeStyle="rgba(175,208,220,.45)";ctx.lineWidth=2.5;
       ctx.beginPath();ctx.moveTo(-90,5);ctx.lineTo(-69,4);
@@ -579,7 +579,7 @@
     const band=BANDS[ship.lane],x=project(ship.wx);
     if(x<-150||x>W+150)return;
     ctx.save();
-    ctx.globalAlpha=band.kind==="submarine"?.48:band.kind==="destroyer"?.80:.92;
+    ctx.globalAlpha=band.kind==="submarine"?.9:band.kind==="destroyer"?.80:.92;
     ctx.translate(x,band.y+Math.sin(wavePhase*2+ship.phase)*1.1);
     ctx.scale((band.speed>0?1:-1)*band.scale,band.scale);
     ctx.fillStyle="rgba(13,37,49,.2)";
