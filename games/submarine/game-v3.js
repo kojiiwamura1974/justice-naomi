@@ -35,7 +35,7 @@
   const cameraWorld=()=>WORLD*.5+bearing*31;
   let state="ready",difficulty="normal",score=0,best=0,bearing=0;
   let elapsed=0,timeLeft=60,checkpointIndex=0,holdDir=0,reloadTimer=0,sinkingHold=0,gameSec=0,wavePhase=0;
-  let ships=[],shots=[],sparks=[],smoke=[],rings=[],boomWords=[];
+  let ships=[],shots=[],sparks=[],smoke=[],rings=[];
   let frameLast=0,activePointer=null,lastPointerX=0;
   let reactionExpires=0,toastExpires=0,shakeTime=0,flash=0,voiceTimer=0,lastMiss=-99;
   let audio=null,flightAudio=null,pendingCheer=null,pendingResult=null,runNumber=0;
@@ -118,7 +118,7 @@
     stopFlightSound(.04);
     state="playing";runNumber++;score=0;bearing=0;holdDir=0;elapsed=0;timeLeft=60;checkpointIndex=0;
     reloadTimer=0;sinkingHold=0;pendingCheer=null;pendingResult=null;gameSec=0;wavePhase=0;flash=0;shakeTime=0;
-    shots=[];sparks=[];smoke=[];rings=[];boomWords=[];lastMiss=-99;
+    shots=[];sparks=[];smoke=[];rings=[];lastMiss=-99;
     setupFleet();overlay.classList.remove("active");$toast.classList.remove("visible");
     updateHUD();updateFireControl();
     speak("いけー！　狙って，狙って！","happy",1.3);
@@ -200,7 +200,7 @@
     const fx=band.kind==="battleship"?1:band.kind==="destroyer"?.77:.48;
     rings.push({wx:x,y:band.y,age:0,dur:1.45,fx});
     rings.push({wx:x,y:band.y,age:-.24,dur:1.6,fx});
-    boomWords.push({wx:x,y:band.y-25*fx,age:0,dur:1.9,fx});
+    // Explosion effect is audio/visual only; no on-screen sound words.
     for(let i=0;i<65;i++){
       const ang=rand(0,Math.PI*2),v=rand(25,185)*fx;
       sparks.push({wx:x,y:band.y,vx:Math.cos(ang)*v*1.4,vy:Math.sin(ang)*v-rand(12,76)*fx,
@@ -341,7 +341,7 @@
     sparks=sparks.filter(p=>{p.age+=dt;p.wx+=p.vx*dt;p.y+=p.vy*dt;p.vy+=132*dt;return p.age<p.dur;});
     smoke=smoke.filter(p=>{p.age+=dt;p.wx+=p.vx*dt;p.y+=p.vy*dt;return p.age<p.dur;});
     rings=rings.filter(p=>(p.age+=dt)<p.dur);
-    boomWords=boomWords.filter(p=>(p.age+=dt)<p.dur);
+
     updateFireControl();
     // Sparks and smoke continue after the score gate while a hit finishes.
     if(state==="finishing"){
@@ -559,14 +559,6 @@
       ctx.shadowBlur=9;ctx.shadowColor="#111720";
       ctx.beginPath();ctx.arc(x,p.y,p.r*(1+f*1.2),0,Math.PI*2);ctx.fill();
     });
-    boomWords.forEach(p=>{
-      const f=clamp(p.age/p.dur,0,1),x=project(p.wx);
-      ctx.globalAlpha=Math.pow(1-f,.8);
-      ctx.font="900 "+Math.floor((32+f*13)*p.fx)+"px system-ui,sans-serif";
-      ctx.textAlign="center";ctx.lineWidth=5*p.fx;ctx.strokeStyle="#4d2519";
-      ctx.strokeText("ズガーンッ！",x,p.y-26*f);
-      ctx.fillStyle="#ffe0ad";ctx.fillText("ズガーンッ！",x,p.y-26*f);
-    });
     ctx.restore();
   }
   function reticle(){
@@ -687,19 +679,25 @@
     canvas.addEventListener(ev,e=>{
       if(activePointer===e.pointerId){activePointer=null;canvas.classList.remove("dragging");}
     });
+  // Left/right arrows or A/D move the periscope. Space or F fires once.
+  const keyboardHeld=new Set();
+  function syncKeySteering(){
+    const left=keyboardHeld.has("ArrowLeft")||keyboardHeld.has("KeyA");
+    const right=keyboardHeld.has("ArrowRight")||keyboardHeld.has("KeyD");
+    holdDir=left===right?0:(left?-1:1);
+  }
   window.addEventListener("keydown",e=>{
-    if(["ArrowLeft","ArrowRight","Space","Enter","KeyR"].includes(e.code))e.preventDefault();
-    if(e.code==="ArrowLeft")holdDir=-1;
-    if(e.code==="ArrowRight")holdDir=1;
-    if(e.code==="Space"&&!e.repeat){if(state==="playing")fire();else startGame();}
-    if(e.code==="Enter"&&(state==="ready"||state==="over"))startGame();
-    if(e.code==="KeyR"&&state==="over")startGame();
+    if(["ArrowLeft","ArrowRight","KeyA","KeyD","Space","KeyF","Enter","KeyR"].includes(e.code))e.preventDefault();
+    if(["ArrowLeft","ArrowRight","KeyA","KeyD"].includes(e.code)){keyboardHeld.add(e.code);syncKeySteering();}
+    if((e.code==="Space"||e.code==="KeyF")&&!e.repeat){
+      if(state==="playing")fire();
+      else if(state==="ready"||state==="over")startGame();
+    }
+    if(e.code==="Enter"&&!e.repeat&&(state==="ready"||state==="over"))startGame();
+    if(e.code==="KeyR"&&!e.repeat&&state==="over")startGame();
   });
-  window.addEventListener("keyup",e=>{
-    if(e.code==="ArrowLeft"&&holdDir===-1)holdDir=0;
-    if(e.code==="ArrowRight"&&holdDir===1)holdDir=0;
-  });
-  window.addEventListener("blur",()=>holdDir=0);
+  window.addEventListener("keyup",e=>{keyboardHeld.delete(e.code);syncKeySteering();});
+  window.addEventListener("blur",()=>{keyboardHeld.clear();holdDir=0;});
   seBtn.addEventListener("click",()=>{
     prefs.isSeOn=!prefs.isSeOn;
     if(!prefs.isSeOn)stopFlightSound(.08);
