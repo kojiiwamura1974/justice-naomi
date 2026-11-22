@@ -838,6 +838,14 @@ kbd {
 .submarine-layout .character-card{height:100%}
 .submarine-layout .char-stage{flex:1;min-height:270px}
 .submarine-layout .char-img{max-height:100%}
+/* Keep desktop portraits close to the speech bubble without stretching the frame. */
+@media(min-width:751px){
+  .submarine-layout .character-panel{align-self:start}
+  .submarine-layout .character-card{height:auto}
+  .submarine-layout .char-stage{flex:none;width:min(100%,280px);height:auto;min-height:0;aspect-ratio:3/4}
+  .submarine-layout .char-photo-frame{height:auto;align-self:stretch}
+}
+
 @media(max-width:1000px){
   .submarine-layout{grid-template-columns:minmax(0,1fr) 290px;gap:10px}
   .submarine-layout .right-panel{width:290px}
