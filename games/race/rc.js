@@ -48,11 +48,27 @@ function nearest(x,y){
 }
 const course=document.createElement('canvas');course.width=W;course.height=H;
 const bg=course.getContext('2d');
+const mini=document.createElement('canvas');mini.width=240;mini.height=150;
+const map=mini.getContext('2d');
+const miniScale=mini.width/W;
+const zoom=1.9, viewW=W/zoom, viewH=H/zoom;
+const camera={x:0,y:0};
+let wallRecovery=null;
 function label(x,y,t,col,size,align='left'){
  bg.fillStyle=col;bg.font='800 '+size+'px ui-monospace,monospace';bg.textAlign=align;bg.fillText(t,x,y);
 }
 function paintCourse(){
  const circuit=new Path2D(); ring.forEach(([x,y],i)=>i?circuit.lineTo(x,y):circuit.moveTo(x,y));circuit.closePath();
+ // Prepare one simplified full-course layer; re-use it every frame.
+ map.save();map.scale(miniScale,miniScale);
+ map.fillStyle='#141a2c';map.fillRect(0,0,W,H);
+ map.lineCap='round';map.lineJoin='round';
+ for(const [width,color] of [[half*2+15,'#ae899b'],[half*2-1,'#5c6379']]){
+  map.lineWidth=width;map.strokeStyle=color;map.stroke(circuit);
+ }
+ const gateA=track(0,-half+4),gateB=track(0,half-4);
+ map.beginPath();map.moveTo(gateA.x,gateA.y);map.lineTo(gateB.x,gateB.y);
+ map.strokeStyle='#fff1be';map.lineWidth=12;map.stroke();map.restore();
  const grad=bg.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#323a58');grad.addColorStop(1,'#1c253e');bg.fillStyle=grad;bg.fillRect(0,0,W,H);
  bg.strokeStyle='#b0c6ff11';bg.lineWidth=1;
  for(let x=0;x<W;x+=24){bg.beginPath();bg.moveTo(x,0);bg.lineTo(x,H);bg.stroke();}
@@ -86,9 +102,9 @@ function paintCourse(){
 const colors=['#fd747f','#55d4d0','#ffbd57','#aab0fd','#84d875'];
 const rivals=[{d:-18,lane:-27,v:148,id:1},{d:-18,lane:27,v:138,id:2},{d:-48,lane:-27,v:128,id:3},{d:-48,lane:27,v:118,id:4}];
 const p0=-73;
-let car, enemies, phase='ready', prev=0, accumulator=0, hudAt=0, toastTil=0, bumpTil=0, reactionTil=0, spin=0, immunity=0;
+let car, enemies, phase='ready', prev=0, accumulator=0, hudAt=0, toastTil=0, reactionTil=0, spin=0, immunity=0;
 let ac, engine, engineGain, audioClip, at=0, voiceSeq=0, introTime=0;
-const voiceData=new Map();
+const voiceData=new Map(), portraitCache=[];
 const controls={left:new Set(),right:new Set(),gas:new Set(),brake:new Set()};
 const has=k=>controls[k].size>0;
 const resetInput=()=>{for(const s of Object.values(controls))s.clear();document.querySelectorAll('.held').forEach(x=>x.classList.remove('held'));};
@@ -118,8 +134,8 @@ function beep(freq,kind='triangle'){
  if(!ac||!prefs.isSeOn)return;
  const t=ac.currentTime, o=ac.createOscillator(),g=ac.createGain();o.type=kind;o.frequency.setValueAtTime(freq,t);o.frequency.exponentialRampToValueAtTime(freq*.62,t+.17);g.gain.setValueAtTime(.055,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+.21);
 }
-function speak(line,mood='normal',clip){
- naomi.setState(mood);naomi.say(line);reactionTil=at+2.6;
+function speak(line,mood='normal',clip,reaction){
+ naomi.setState(mood,reaction);naomi.say(line);reactionTil=at+2.6;
  if(clip&&prefs.isVoiceOn){
    stopVoice();const seq=voiceSeq, expires=performance.now()+700;
    voiceData.get(clip)?.then(buffer=>{
@@ -138,7 +154,11 @@ function playerRank(d=car.d, fraction=1){
 }
 function queueStart(){
  if(phase!=='ready'&&phase!=='over')return;
- stopVoice();rig();warmVoice();resetRace(false);
+ stopVoice();rig();warmVoice();
+ if(!portraitCache.length)for(const file of new Set(Object.values(naomi.releasedPortraits).flatMap(Object.values))){
+  const image=new Image();image.src='/games/submarine/portraits/'+file;portraitCache.push(image);
+ }
+ resetRace(false);
  phase='countdown';introTime=3;
  $('startBtn').disabled=true;$('overlayScreen').classList.remove('active');
  document.querySelectorAll('.difficulty-btn').forEach(b=>{b.disabled=true;});
@@ -157,7 +177,7 @@ function resetRace(start){
  const a=track(p0);
  car={...a,v:0,d:p0,near:mod(p0,total),laps:0,next:0};
  enemies=rivals.map(x=>({...x,pos:track(x.d,x.lane)}));
- phase=start?'playing':'ready'; spin=0;immunity=0;bumpTil=0;toastTil=0;resetInput(); $('checkpointToast').classList.remove('visible');
+ phase=start?'playing':'ready'; spin=0;immunity=0;wallRecovery=null;toastTil=0;followCamera(0,true);resetInput(); $('checkpointToast').classList.remove('visible');
  if(start){
   $('overlayScreen').classList.remove('active');naomi.addFever(-100);
   speak('よーい、スタート！');toast('GO!',.70,true);beep(330);
@@ -165,7 +185,7 @@ function resetRace(start){
  document.querySelectorAll('.difficulty-btn').forEach(b=>{b.disabled=start;b.classList.toggle('selected',b.dataset.mode===mode);b.setAttribute('aria-pressed',String(b.dataset.mode===mode));});
  hud();
 }
-function progress(next){
+function progress(next,quietLap=false){
  const raw=next.p-car.near, delta=raw-total*Math.round(raw/total);
  // Movement is checked at 120 Hz; any section jump is not physical travel.
  if(Math.abs(delta)>11)return false;
@@ -181,7 +201,8 @@ function progress(next){
   car.laps++;
   if(car.laps===1&&rank<=3){
    toast('1周目 '+rank+'位！　ファイナルラップ');beep(510);
-   speak('やったやったー！','happy','hit_yatta');naomi.addFever(50);
+   if(!quietLap)speak('やったやったー！','happy','hit_yatta');
+   naomi.addFever(50);
   }else{
    phase='over';resetInput();document.querySelectorAll('.difficulty-btn').forEach(b=>b.disabled=false);
    const win=car.laps===2&&rank===1;
@@ -213,6 +234,18 @@ function update(dt){
    const last=Math.min(spin,dt);
    car.a+=last*Math.PI*3;
    spin=Math.max(0,spin-dt);
+   if(spin<=1e-8){
+    spin=0;
+    if(wallRecovery){
+     const {x,y,vx,vy,r}=wallRecovery;
+     const nx=vx/r,ny=vy/r;
+     // Come to rest just inside the wall, pointed away from it if needed.
+     car.x=x+nx*(half-11);car.y=y+ny*(half-11);
+     const dx=Math.cos(car.a),dy=Math.sin(car.a),out=dx*nx+dy*ny;
+     if(out>0)car.a=Math.atan2(dy-2*out*ny,dx-2*out*nx);
+     wallRecovery=null;
+    }
+   }
    return;
  }
  immunity=Math.max(0,immunity-dt);
@@ -227,20 +260,65 @@ function update(dt){
  car.a+=dir*Math.sign(car.v)*dt*(2.55*Math.min(1,av/38)-.52*av/272);
  const px=car.x,py=car.y;
  car.x+=Math.cos(car.a)*car.v*dt;car.y+=Math.sin(car.a)*car.v*dt;
- let n=nearest(car.x,car.y);
- if(n.r>half-8){
-    const scale=(half-8)/n.r;
+ const n=nearest(car.x,car.y);
+ // Boundary is the painted curb centerline. The sprite may graze it;
+ // only its world-space center touching the line starts a spin.
+ if(n.r>=half){
+    const scale=half/n.r;
     car.x=n.x+n.vx*scale;car.y=n.y+n.vy*scale;
-    const before=car.v;
-    car.v*=Math.pow(.035,dt);
-    if(Math.abs(before)>115 && at>bumpTil){beep(96,'square');speak('おっと、ゆっくり！','panic');bumpTil=at+1.15;}
-    n=nearest(car.x,car.y);
+    wallRecovery=n;
+    startSpin();
+ }else if(immunity<=0&&enemies.some(e=>Math.hypot(car.x-e.pos.x,car.y-e.pos.y)<22)){
+    startSpin();
  }
- if(immunity<=0&&enemies.some(e=>Math.hypot(car.x-e.pos.x,car.y-e.pos.y)<22)){
-   car.v=0;spin=2;immunity=.9;
-   beep(125,'square');speak('うそー。','panic','miss_uso');toast('スピン！',2);
+ const projected=nearest(car.x,car.y), raw=projected.p-car.near;
+ const delta=raw-total*Math.round(raw/total);
+ const before=playerRank(car.d,0);
+ const after=playerRank(car.d+delta);
+ // The player must actually move forward past a rival; an initial lead,
+ // checkpoint reset, rival update alone or a wall projection cannot react.
+ const pass=spin===0&&delta>0&&delta<=11&&after<before;
+ if(progress(projected,pass)===false){car.x=px;car.y=py;car.v*=Math.pow(.025,dt);}
+ else if(pass&&phase==='playing'){
+   if(after===1)speak('ジャスティスっ！','happy','hit_justice','justice');
+   else speak('やったやったー！','happy','hit_yatta','hit');
  }
- if(progress(nearest(car.x,car.y))===false){car.x=px;car.y=py;car.v*=Math.pow(.025,dt);}
+}
+function startSpin(){
+ car.v=0;spin=2;immunity=.9;
+ beep(125,'square');speak('うそー。','panic','miss_uso','miss');toast('スピン！',2);
+}
+function followCamera(dt,snap=false){
+ // World remains north-up. Bias framing down the track, not toward the
+ // car's spinning nose; clamp within the painted world and keep car in view.
+ const lead=(32+Math.min(43,Math.abs(car.v)*.16))*(car.v<-.5?-1:1);
+ const ahead=track(car.near+lead);
+ const targetX=clamp(mix(car.x,ahead.x,.75)-viewW*.5,0,W-viewW);
+ const targetY=clamp(mix(car.y,ahead.y,.75)-viewH*.5,0,H-viewH);
+ const t=snap?1:1-Math.exp(-10*dt);
+ camera.x=clamp(mix(camera.x,targetX,t),Math.max(0,car.x-viewW+30),Math.min(W-viewW,Math.max(0,car.x-30)));
+ camera.y=clamp(mix(camera.y,targetY,t),Math.max(0,car.y-viewH+32),Math.min(H-viewH,Math.max(0,car.y-32)));
+ // Reserve space for the fixed overlay if the car is approaching the
+ // upper-left world boundary; a small amount of surrounding margin is OK.
+ const overlayBias=clamp((340-(car.x-camera.x)*zoom)/86,0,1);
+ camera.y=mix(camera.y,Math.min(camera.y,car.y-166/zoom),overlayBias);
+}
+function drawMiniMap(){
+ const x=14,y=14,w=200,h=w*H/W,scale=w/W;
+ ctx.save();
+ ctx.fillStyle='#0b1122';ctx.strokeStyle='#eacf9c';ctx.lineWidth=2;
+ ctx.beginPath();ctx.roundRect(x-4,y-4,w+8,h+8,5);ctx.fill();ctx.stroke();
+ ctx.drawImage(mini,x,y,w,h);
+ ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
+ ctx.strokeStyle='#ffe4b679';ctx.lineWidth=1.5;
+ ctx.strokeRect(x+camera.x*scale,y+camera.y*scale,viewW*scale,viewH*scale);
+ for(const e of enemies)dot(e.pos,colors[e.id],4.1,'#101727');
+ dot(car,colors[0],5.7,'#fff0b1');
+ function dot(p,fill,r,edge){
+  ctx.beginPath();ctx.arc(x+p.x*scale,y+p.y*scale,r,0,Math.PI*2);
+  ctx.fillStyle=fill;ctx.fill();ctx.strokeStyle=edge;ctx.lineWidth=1.8;ctx.stroke();
+ }
+ ctx.restore();
 }
 // All cars are deliberately rendered high-contrast from directly overhead.
 function drawCar(p,color,id,hero=false){
@@ -263,9 +341,12 @@ function drawCar(p,color,id,hero=false){
  }
 }
 function draw(){
+ ctx.fillStyle='#22283f';ctx.fillRect(0,0,W,H);
+ ctx.save();ctx.scale(zoom,zoom);ctx.translate(-camera.x,-camera.y);
  ctx.drawImage(course,0,0);
  for(const e of enemies)drawCar(e.pos,colors[e.id],e.id);
  drawCar(car,colors[0],0,true);
+ ctx.restore();drawMiniMap();
 }
 function frame(ms){
  at=ms/1000;const dt=prev?Math.min(.05,at-prev):0;prev=at;
@@ -279,7 +360,7 @@ function frame(ms){
  if(at>hudAt){hud();hudAt=at+.065;}
  if(toastTil&&at>toastTil){$('checkpointToast').classList.remove('visible');toastTil=0;}
  if(phase==='playing'&&reactionTil&&at>reactionTil){naomi.setState('normal');naomi.say('いけいけっ！');reactionTil=0;}
- draw();requestAnimationFrame(frame);
+ followCamera(dt);draw();requestAnimationFrame(frame);
 }
 const key={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowUp:'gas',KeyW:'gas',ArrowDown:'brake',KeyS:'brake'};
 function set(k,id,down){

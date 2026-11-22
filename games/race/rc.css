@@ -32,3 +32,6 @@
 body{padding-inline:0}
 .game-container{width:84%;max-width:1400px;min-width:0}
 @media(max-width:1050px){.game-container{width:88%}}
+
+/* The approved reactions retain the complete head and hand gestures. */
+.char-photo-frame .char-img.rc-reaction{object-fit:contain;object-position:center}

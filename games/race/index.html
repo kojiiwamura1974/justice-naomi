@@ -845,7 +845,7 @@ kbd {
 @media(max-width:520px){.naomi-game-breadcrumb{margin-bottom:5px}.naomi-game-breadcrumb a{font-size:9px}}
 </style>
 <link rel="stylesheet" href="./cabinet.css">
-<link rel="stylesheet" href="./rc.css?v=20261122-width">
+<link rel="stylesheet" href="./rc.css?v=20261122-camera-wall-reactions">
 </head>
 <body>
 <div class="game-container">
@@ -859,7 +859,7 @@ kbd {
   <div class="machine-label"><span>RADIO CONTROL <b>2D CIRCUIT</b></span><span class="machine-lights"><i></i><i></i><i></i></span></div>
   <div class="scope-housing">
     <div class="scope-viewport" id="scopeViewport">
-      <canvas id="seaCanvas" width="960" height="600" aria-label="ラジコンのコースを真上から表示"></canvas>
+      <canvas id="seaCanvas" width="960" height="600" aria-label="ラジコンの拡大走行画面。左上にコース全体と5台の位置を表示"></canvas>
       <div class="glass-glare"></div>
       <div id="overlayScreen" class="scope-overlay active">
         <div class="scope-overlay-inner">
@@ -999,6 +999,10 @@ class NaomiCharacter {
     this.cutinImg = document.getElementById('cutinImg');
 
     this.fever = 0;
+    this.releasedPortraits = {
+      idol: {hit:'idol-peace.webp', miss:'idol-cry.webp', justice:'justice-god03.jpg'},
+      school: {hit:'school.webp', miss:'school-cry.webp', justice:'school.webp'}
+    };
 
     this.initCostumeButtons();
     this.setState('normal');
@@ -1030,7 +1034,7 @@ class NaomiCharacter {
     this.say(msg);
   }
 
-  setState(state) {
+  setState(state, reaction) {
     this.state = state;
     const moodMap = {
       normal: { badge: '😊 ごきげん', class: '' },
@@ -1043,9 +1047,13 @@ class NaomiCharacter {
     this.moodBadge.textContent = info.badge;
 
     const costumeData = COSTUMES[this.currentCostume];
-    const imgSrc = costumeData[state] || costumeData.normal;
+    // Only use released Submarine reactions, retaining the selected outfit.
+    const released = this.releasedPortraits[this.currentCostume];
+    const imgSrc = released[reaction]
+      ? '/games/submarine/portraits/' + released[reaction]
+      : costumeData[state] || costumeData.normal;
     this.imgElement.src = imgSrc;
-    this.imgElement.className = `char-img ${info.class}`;
+    this.imgElement.className = `char-img ${info.class}${released[reaction] ? " rc-reaction" : ""}`;
   }
 
   say(text) {
@@ -1066,6 +1074,6 @@ class NaomiCharacter {
 // ==========================================
 
 </script>
-<script src="./rc.js?v=20261122-coin"></script>
+<script src="./rc.js?v=20261122-camera-wall-reactions"></script>
 </body>
 </html>
