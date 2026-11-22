@@ -104,7 +104,7 @@
     }
   }
   function speak(line,mood="normal",hold=1.7){
-    naomi.setState(mood);
+    naomi.setState(mood,line);
     naomi.say(line);
     reactionExpires=performance.now()/1000+hold;
   }
@@ -224,7 +224,7 @@
     sound("boom"); // "ズガーンッ" starts only at the actual impact.
     const clip=band.kind==="submarine"?DEEP_VOICE:pick(HIT_VOICES);
     // Leave the first beat to the impact, including when a score gate stops play.
-    naomi.setState("happy");
+    naomi.setState("happy",clip[1]);
     naomi.speechText.textContent=clip[1];
     pendingCheer={delay:.85,clip};
     naomi.addFever(ship.lane===2?28:ship.lane===1?17:10);

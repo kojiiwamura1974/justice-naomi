@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preload" as="image" href="/games/submarine/portraits/justice-god03.jpg">
 <title>ジャスティスサブマリン | Justice Submarine</title>
 <style>
 :root {
@@ -564,6 +565,30 @@ body {
   animation: breathing 4.5s ease-in-out infinite;
 }
 
+
+/* A single restrained cue on the idol's deepest-hit portrait. */
+.char-photo-frame.justice-reveal::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(112deg, transparent 30%, rgba(255,229,249,.24) 50%, transparent 70%);
+  background-size: 230% 100%;
+  animation: justiceLight .35s ease-out both;
+}
+.char-photo-frame.justice-reveal .char-img { animation: justicePortrait .35s ease-out both; }
+@keyframes justiceLight {
+  0% { background-position: right center; opacity: 0; }
+  28% { opacity: 1; }
+  100% { background-position: left center; opacity: 0; }
+}
+@keyframes justicePortrait {
+  from { transform: scale(.98); }
+  to { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .char-photo-frame.justice-reveal::after { display: none; }
+  .char-photo-frame.justice-reveal .char-img { animation: none; }
+}
+
 .char-bounce {
   animation: charJump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -1021,11 +1046,20 @@ class NaomiCharacter {
     const costume = COSTUMES[this.currentCostume];
     const name = line === '次はいけるっ！' && costume.cheer
       ? costume.cheer : costume[this.state] || costume.normal;
-    const src = portrait(name);
-    if (this.imgElement.getAttribute('src') !== src) this.imgElement.src = src;
+    const src = this.currentCostume === 'idol' && line === 'ジャスティスっ！'
+      ? PORTRAIT_DIR + 'justice-god03.jpg' : portrait(name);
+    if (this.imgElement.getAttribute('src') === src) return;
+    const frame = this.imgElement.parentElement;
+    frame.classList.remove('justice-reveal');
+    this.imgElement.src = src;
+    if (src.endsWith('/justice-god03.jpg')) {
+      this.imgElement.decode().then(() => {
+        if (this.imgElement.getAttribute('src') === src) frame.classList.add('justice-reveal');
+      }).catch(() => {});
+    }
   }
 
-  setState(state) {
+  setState(state, line = '') {
     this.state = state;
     const moodMap = {
       normal: { badge: '😊 ごきげん', class: '' },
@@ -1037,7 +1071,7 @@ class NaomiCharacter {
     const info = moodMap[state] || moodMap.normal;
     this.moodBadge.textContent = info.badge;
 
-    this.updatePortrait();
+    this.updatePortrait(line);
     this.imgElement.className = `char-img ${info.class}`;
   }
 
@@ -1087,6 +1121,6 @@ class NaomiCharacter {
 // ==========================================
 
 </script>
-<script src="/games/submarine/game-v3.js?v=20261121-justice-stages"></script>
+<script src="/games/submarine/game-v3.js?v=20261122-justice-portrait"></script>
 </body>
 </html>
