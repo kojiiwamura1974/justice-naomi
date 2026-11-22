@@ -909,7 +909,7 @@ kbd {
   <div class="submarine-options">
     <div class="costume-toggle-group">
       <button id="costumeIdolBtn" class="costume-btn active" type="button">🎤 アイドル</button>
-      <button id="costumeSchoolBtn" class="costume-btn" type="button">🏫 日常・制服</button>
+      <button id="costumeSchoolBtn" class="costume-btn" type="button">🏫 私服</button>
     </div>
     <div class="sound-controls">
       <button id="seToggleBtn" class="pill-btn active" type="button">🔔 SE ON</button>
@@ -930,7 +930,7 @@ kbd {
 
           <!-- 吹き出し -->
           <div class="speech-bubble" id="speechBubble">
-            <p id="speechText">こんにちは、尚美です！一緒にパズル楽しもうね♪</p>
+            <p id="speechText">こんにちは、尚美です！一緒に遊ぼーっ。</p>
           </div>
 
           <!-- キャラクター立ち絵表示部 -->
@@ -1029,7 +1029,7 @@ class NaomiCharacter {
     if (!COSTUMES[costumeKey]) return;
     this.currentCostume = costumeKey;
     this.setState(this.state);
-    const msg = costumeKey === 'idol' ? "アイドル衣装に着替えたよ！キラキラいこ〜✨" : "制服スタイルに着替えたよ！放課後パズルだね♪";
+    const msg = costumeKey === 'idol' ? "アイドル衣装に着替えたよ！キラキラいこ〜✨" : "ドキドキするねっ。";
     this.say(msg);
   }
 
