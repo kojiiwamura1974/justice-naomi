@@ -27,7 +27,7 @@ const files = [
   'games/race/audio/miss_oshii.mp3',
   'games/race/audio/miss_uso.mp3',
   ...['game-v3.js', 'game-v3.css', 'cover.svg', 'portraits/justice-god03.jpg',
-    ...['school', 'idol-peace', 'idol-ready', 'casual-wave', 'casual-cheer', 'idol-cry'].map(p=>`portraits/${p}.webp`),
+    ...['school', 'idol-peace', 'idol-ready', 'casual-wave', 'casual-cheer', 'idol-cry', 'school-cry', 'casual-cry'].map(p=>`portraits/${p}.webp`),
     ...voices.map(v=>`voice/${v}.mp3`)].map(f=>`${submarine}/${f}`)
 ];
 const styles = `

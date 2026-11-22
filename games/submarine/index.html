@@ -886,7 +886,7 @@ kbd {
 .naomi-game-breadcrumb a:focus-visible,.naomi-game-breadcrumb a:hover{color:#fff7eb;text-decoration:underline;text-underline-offset:5px}
 @media(max-width:520px){.naomi-game-breadcrumb{margin-bottom:5px}.naomi-game-breadcrumb a{font-size:9px}}
 </style>
-<link rel="stylesheet" href="/games/submarine/game-v3.css?v=20261122-cry-width">
+<link rel="stylesheet" href="/games/submarine/game-v3.css?v=20261122-cry-outfits">
 </head>
 <body>
 <div class="game-container">
@@ -1010,7 +1010,7 @@ kbd {
 const PORTRAIT_DIR = '/games/submarine/portraits/';
 const COSTUMES = {
   idol: { button: 'costumeIdolBtn', normal: 'idol-ready', happy: 'idol-peace', greeting: 'アイドル衣装に着替えたよ！キラキラいこ〜✨' },
-  school: { button: 'costumeSchoolBtn', normal: 'school', greeting: '制服に着替えたよ。ドキドキするねっ。' },
+  school: { button: 'costumeSchoolBtn', normal: 'school', greeting: '制服に着替えたよ。放課後楽しみだね。' },
   casual: { button: 'costumeCasualBtn', normal: 'casual-wave', cheer: 'casual-cheer', greeting: '私服に着替えたよ。ドキドキするねっ。' }
 };
 const portrait = name => PORTRAIT_DIR + name + '.webp';
@@ -1082,8 +1082,7 @@ class NaomiCharacter {
   }
 
   showMiss() {
-    if (this.currentCostume !== 'idol') return;
-    this.imgElement.src = PORTRAIT_DIR + 'idol-cry.webp';
+    this.imgElement.src = portrait(this.currentCostume + '-cry');
     this.imgElement.classList.remove('miss-cry');
     void this.imgElement.offsetWidth;
     this.imgElement.classList.add('miss-cry');
