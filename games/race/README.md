@@ -1,0 +1,8 @@
+# ジャスティスRC / Justice RC
+
+- Publish `games/race/` as its own static directory. The HTML reuses the already-published Justice Naomi costume/portrait UI. All gameplay, CSS, cover and five prior approved MP3 files are same-folder dependencies; no backend, install, or payment.
+- Top-down two-lap RC race, five cars. Red car and yellow player marker. Pass lap one in 1st–3rd, or retire. Clear only if you cross the second finish in 1st.
+- Arcade selectors: 初級｜オーバル, 中級｜S字, 上級｜ヘアピン. Controls: ←/→ or A/D; ↑ or W accelerator; ↓ or S brakes then reverses; R re-centers at current arc progress. Touch buttons support simultaneous steering and throttle. Changing course is available before or after a run. 100円 / もう100円！ are free arcade cabinet flourishes.
+- Physical car contact spins the player in place for two simulation seconds; steering, pedals and reset cannot move it during the spin. Rivals continue moving while the player spins. There is 0.9s immunity on release so the same contact cannot immediately restart the penalty.
+- Base rival speeds #1–#4 are 148, 138, 128, 118 track units/sec (same step of 10); per-course multipliers are .85, 1.0, and 1.06, respectively. Player maximum forward speed is 272. All valid laps require visiting the quarter track positions in order and crossing forward; reverse cannot add milestones and unrealistic between-sector jumps are rejected. Rivals win exact ties.
+- Reused generic voice reactions (not redubbed): `miss_uso` spin; `hit_yatta` first-lap qualification; `miss_oshii` denied on lap one; `endwon` nonwinning finish; `hit_justice` first-place finish. Volume, SE and Voice independently controlled.

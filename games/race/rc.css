@@ -1,0 +1,21 @@
+.submarine-panel{background:linear-gradient(145deg,#302038,#161525 65%,#110e17);border-color:#695472}
+.machine-label{color:#fadb92}
+.scope-housing{border-color:#877387;background:#281d32}
+.scope-viewport{background:#222437}
+.scope-viewport #seaCanvas{cursor:default}
+.scope-viewport .glass-glare{pointer-events:none;opacity:.38}
+.submarine-status{align-items:stretch}
+.submarine-status .smeter{min-width:0}
+#resetBtn{min-height:38px;flex:1;line-height:1.25}
+.submarine-controls{align-items:stretch;gap:7px}
+.submarine-controls .turn-buttons,.pedals{display:flex;gap:6px;flex:1;min-width:0}
+.submarine-controls button{min-height:54px;flex:1;width:auto;min-width:0;touch-action:none;user-select:none;margin:0;padding:5px 4px;}
+.pedals .gas{font-size:clamp(12px,2.2vw,21px);color:#10201b;background:linear-gradient(180deg,#b9ec9e,#75ba79);border-color:#d4f6b0;text-shadow:none}
+.brake{font-size:clamp(11px,1.9vw,16px);background:linear-gradient(180deg,#544154,#2d2537)}
+.brake small{font-size:.78em;color:#e5c8dd}
+.submarine-controls button.held{filter:brightness(1.25);transform:translateY(2px);box-shadow:inset 0 1px 9px #16112099}
+.submarine-options .pill-btn,.submarine-options .costume-btn{min-height:40px}
+#overlayTitle{margin-block:.15em}
+@media(max-width:640px){.submarine-controls button{min-height:54px}.scope-help{line-height:1.5}.scope-overlay-inner{max-height:100%;overflow:auto;padding:8px 12px}.scope-overlay .coin{width:36px;height:36px;font-size:15px;line-height:32px;margin-bottom:3px;box-shadow:none}.scope-overlay-inner p{margin:5px 0 8px}.scope-overlay-inner .start-btn{padding:10px 16px}}
+@media(prefers-reduced-motion:reduce){.char-bounce,.char-shake,.speech-pop{animation:none!important}}
+@media(max-width:440px){.difficulty-buttons{width:100%;justify-content:center}.difficulty-btn{padding-inline:6px;white-space:nowrap}.submarine-status{column-gap:4px}.submarine-status .smeter{padding-inline:4px}.submarine-status .smeter b{font-size:clamp(14px,3.8vw,20px)}#resetBtn{max-width:92px;padding-inline:3px}.scope-viewport .checkpoint-toast{min-width:0;max-width:87%;padding:7px 10px}}
