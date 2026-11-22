@@ -1029,7 +1029,7 @@ class NaomiCharacter {
     if (!COSTUMES[costumeKey]) return;
     this.currentCostume = costumeKey;
     this.setState(this.state);
-    const msg = costumeKey === 'idol' ? "アイドル衣装に着替えたよ！キラキラいこ〜✨" : "ドキドキするねっ。";
+    const msg = costumeKey === 'idol' ? "アイドル衣装に着替えたよ！キラキラいこ〜✨" : "私服に着替えたよ。ドキドキするねっ。";
     this.say(msg);
   }
 
