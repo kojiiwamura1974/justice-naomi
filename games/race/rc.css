@@ -19,3 +19,11 @@
 @media(max-width:640px){.submarine-controls button{min-height:54px}.scope-help{line-height:1.5}.scope-overlay-inner{max-height:100%;overflow:auto;padding:8px 12px}.scope-overlay .coin{width:36px;height:36px;font-size:15px;line-height:32px;margin-bottom:3px;box-shadow:none}.scope-overlay-inner p{margin:5px 0 8px}.scope-overlay-inner .start-btn{padding:10px 16px}}
 @media(prefers-reduced-motion:reduce){.char-bounce,.char-shake,.speech-pop{animation:none!important}}
 @media(max-width:440px){.difficulty-buttons{width:100%;justify-content:center}.difficulty-btn{padding-inline:6px;white-space:nowrap}.submarine-status{column-gap:4px}.submarine-status .smeter{padding-inline:4px}.submarine-status .smeter b{font-size:clamp(14px,3.8vw,20px)}#resetBtn{max-width:92px;padding-inline:3px}.scope-viewport .checkpoint-toast{min-width:0;max-width:87%;padding:7px 10px}}
+
+/* Coin-in cue: centered on the actual playfield, not the checkpoint strip. */
+.scope-viewport .checkpoint-toast.coin-countdown {
+  top:50%; width:auto; min-width:min(45%,150px); padding:.14em .36em;
+  font-size:clamp(42px,10vw,88px); line-height:1.1; letter-spacing:.035em;
+  color:#fff1ca; border-color:#eec479; background:#071321e8;
+}
+@media(prefers-reduced-motion:reduce){.scope-viewport .checkpoint-toast.coin-countdown{transition:none}}

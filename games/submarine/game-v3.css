@@ -52,3 +52,11 @@
 /* Progress milestones stay ABOVE the center of the scope, so they never obscure sinking wrecks. */
 .scope-viewport .checkpoint-toast{top:13%;min-width:min(80%,280px);padding:9px 12px;font-size:clamp(13px,1.8vw,19px);background:rgba(8,18,27,.87)}
 @media(max-width:640px){.scope-viewport .checkpoint-toast{top:16%;padding:6px 8px;font-size:12px;min-width:0;width:75%}}
+
+/* Coin-in cue: centered on the actual playfield, not the checkpoint strip. */
+.scope-viewport .checkpoint-toast.coin-countdown {
+  top:50%; width:auto; min-width:min(45%,150px); padding:.14em .36em;
+  font-size:clamp(42px,10vw,88px); line-height:1.1; letter-spacing:.035em;
+  color:#fff1ca; border-color:#eec479; background:#071321e8;
+}
+@media(prefers-reduced-motion:reduce){.scope-viewport .checkpoint-toast.coin-countdown{transition:none}}

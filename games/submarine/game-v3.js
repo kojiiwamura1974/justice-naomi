@@ -39,6 +39,7 @@
   const project=(wx)=>CX+(wx-cameraWorld())*.57;
   const cameraWorld=()=>WORLD*.5+bearing*31;
   let state="ready",difficulty="normal",score=0,best=0,bearing=0;
+  let introTime=0;
   let elapsed=0,timeLeft=60,checkpointIndex=0,holdDir=0,reloadTimer=0,sinkingHold=0,gameSec=0,wavePhase=0;
   let ships=[],shots=[],sparks=[],smoke=[],rings=[];
   let frameLast=0,activePointer=null,lastPointerX=0;
@@ -91,11 +92,11 @@
       const selected=b.dataset.difficulty===difficulty;
       b.classList.toggle("selected",selected);
       b.setAttribute("aria-pressed",String(selected));
-      b.disabled=state==="playing"||state==="finishing";
+      b.disabled=state==="countdown"||state==="playing"||state==="finishing";
     });
   }
   function setDifficulty(mode){
-    if(state==="playing"||state==="finishing"||!LEVELS[mode])return;
+    if(state==="countdown"||state==="playing"||state==="finishing"||!LEVELS[mode])return;
     difficulty=mode;
     checkpointIndex=0;elapsed=0;timeLeft=60;
     updateHUD();
@@ -114,12 +115,36 @@
       naomi.speechText.textContent="狙って，狙って！";
     }
   }
-  function showStageMessage(message,hold=1.55){
+  function showStageMessage(message,hold=1.55,coin=false){
+    $toast.classList.toggle("coin-countdown",coin);
     $toast.textContent=message;
     $toast.classList.add("visible");
     toastExpires=performance.now()/1000+hold;
   }
+  function queueStart(){
+    if(state!=="ready"&&state!=="over")return;
+    state="countdown";introTime=3;holdDir=0;keyboardHeld.clear();
+    stopVoice();stopFlightSound(.04);
+    if(prefs.isVoiceOn||prefs.isSeOn)audioContext();
+    prepareVoice();
+    startBtn.disabled=true;
+    overlay.classList.remove("active");
+    $toast.classList.add("coin-countdown","visible");
+    $toast.textContent="3";
+    updateHUD();updateFireControl();
+  }
+  function advanceIntro(dt){
+    introTime=Math.max(0,introTime-dt);
+    if(introTime>1e-6){
+      const next=String(Math.ceil(introTime-1e-6));
+      if($toast.textContent!==next)$toast.textContent=next;
+      return;
+    }
+    startGame();
+    showStageMessage("FIRE!",.70,true);
+  }
   function startGame(){
+    startBtn.disabled=false;
     naomi.beginPlay();
     stopVoice();
     prepareVoice();
@@ -699,7 +724,9 @@
   }
   function loop(ms){
     const now=ms/1000,dt=Math.min(.045,Math.max(0,(ms-frameLast)/1000||.016));
-    frameLast=ms;animate(dt,now);draw();requestAnimationFrame(loop);
+    frameLast=ms;
+    if(state==="countdown")advanceIntro(dt);else animate(dt,now);
+    draw();requestAnimationFrame(loop);
   }
   function changeBearing(delta){
     if(state!=="playing")return;
@@ -750,13 +777,13 @@
   }
   window.addEventListener("keydown",e=>{
     if(["ArrowLeft","ArrowRight","KeyA","KeyD","Space","KeyF","Enter","KeyR"].includes(e.code))e.preventDefault();
-    if(["ArrowLeft","ArrowRight","KeyA","KeyD"].includes(e.code)){keyboardHeld.add(e.code);syncKeySteering();}
+    if(state==="playing"&&!e.repeat&&["ArrowLeft","ArrowRight","KeyA","KeyD"].includes(e.code)){keyboardHeld.add(e.code);syncKeySteering();}
     if((e.code==="Space"||e.code==="KeyF")&&!e.repeat){
       if(state==="playing")fire();
-      else if(state==="ready"||state==="over")startGame();
+      else if(state==="ready"||state==="over")queueStart();
     }
-    if(e.code==="Enter"&&!e.repeat&&(state==="ready"||state==="over"))startGame();
-    if(e.code==="KeyR"&&!e.repeat&&state==="over")startGame();
+    if(e.code==="Enter"&&!e.repeat&&(state==="ready"||state==="over"))queueStart();
+    if(e.code==="KeyR"&&!e.repeat&&state==="over")queueStart();
   });
   window.addEventListener("keyup",e=>{keyboardHeld.delete(e.code);syncKeySteering();});
   window.addEventListener("blur",()=>{keyboardHeld.clear();holdDir=0;});
@@ -775,6 +802,6 @@
   });
   diffButtons.forEach(b=>b.addEventListener("click",()=>setDifficulty(b.dataset.difficulty)));
   fireBtn.addEventListener("click",fire);
-  startBtn.addEventListener("click",startGame);
+  startBtn.addEventListener("click",queueStart);
   setupFleet();setDifficulty("normal");updateFireControl();requestAnimationFrame(loop);
 })();

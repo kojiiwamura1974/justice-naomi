@@ -87,7 +87,7 @@ const colors=['#fd747f','#55d4d0','#ffbd57','#aab0fd','#84d875'];
 const rivals=[{d:-18,lane:-27,v:148,id:1},{d:-18,lane:27,v:138,id:2},{d:-48,lane:-27,v:128,id:3},{d:-48,lane:27,v:118,id:4}];
 const p0=-73;
 let car, enemies, phase='ready', prev=0, accumulator=0, hudAt=0, toastTil=0, bumpTil=0, reactionTil=0, spin=0, immunity=0;
-let ac, engine, engineGain, audioClip, at=0, voiceSeq=0;
+let ac, engine, engineGain, audioClip, at=0, voiceSeq=0, introTime=0;
 const voiceData=new Map();
 const controls={left:new Set(),right:new Set(),gas:new Set(),brake:new Set()};
 const has=k=>controls[k].size>0;
@@ -129,12 +129,29 @@ function speak(line,mood='normal',clip){
    });
  }
 }
-function toast(message,duration=1.7){
- const e=$('checkpointToast');e.textContent=message;e.classList.add('visible');toastTil=at+duration;
+function toast(message,duration=1.7,coin=false){
+ const e=$('checkpointToast');e.classList.toggle('coin-countdown',coin);e.textContent=message;e.classList.add('visible');toastTil=at+duration;
 }
 function playerRank(d=car.d, fraction=1){
  // Interpolate progress at the player’s crossing; an exact tie favors the rival.
  return 1+enemies.filter(e=>mix(e.previous??e.d,e.d,fraction)>=d-1e-7).length;
+}
+function queueStart(){
+ if(phase!=='ready'&&phase!=='over')return;
+ stopVoice();rig();warmVoice();resetRace(false);
+ phase='countdown';introTime=3;
+ $('startBtn').disabled=true;$('overlayScreen').classList.remove('active');
+ document.querySelectorAll('.difficulty-btn').forEach(b=>{b.disabled=true;});
+ const e=$('checkpointToast');e.classList.add('coin-countdown','visible');e.textContent='3';
+}
+function advanceIntro(dt){
+ introTime=Math.max(0,introTime-dt);
+ if(introTime>1e-6){
+  const e=$('checkpointToast'),next=String(Math.ceil(introTime-1e-6));
+  if(e.textContent!==next)e.textContent=next;
+  return;
+ }
+ $('startBtn').disabled=false;accumulator=0;resetRace(true);
 }
 function resetRace(start){
  const a=track(p0);
@@ -143,7 +160,7 @@ function resetRace(start){
  phase=start?'playing':'ready'; spin=0;immunity=0;bumpTil=0;toastTil=0;resetInput(); $('checkpointToast').classList.remove('visible');
  if(start){
   $('overlayScreen').classList.remove('active');naomi.addFever(-100);
-  speak('よーい、スタート！');toast('GO!',.65);beep(330); 
+  speak('よーい、スタート！');toast('GO!',.70,true);beep(330);
  }
  document.querySelectorAll('.difficulty-btn').forEach(b=>{b.disabled=start;b.classList.toggle('selected',b.dataset.mode===mode);b.setAttribute('aria-pressed',String(b.dataset.mode===mode));});
  hud();
@@ -252,8 +269,8 @@ function draw(){
 }
 function frame(ms){
  at=ms/1000;const dt=prev?Math.min(.05,at-prev):0;prev=at;
- accumulator+=dt;
- while(accumulator>=1/120){update(1/120);accumulator-=1/120;}
+ if(phase==='countdown')advanceIntro(dt);
+ else {accumulator+=dt;while(accumulator>=1/120){update(1/120);accumulator-=1/120;}}
  if(ac&&engineGain){
   const t=ac.currentTime;
   engine.frequency.setTargetAtTime(49+Math.abs(car.v)*.53,t,.06);
@@ -276,7 +293,7 @@ function home(){
  speak('よし、ここからっ！');hud();
 }
 window.addEventListener('keydown',e=>{
- if(key[e.code]&&phase==='playing'){e.preventDefault();set(key[e.code],e.code,true);}
+ if(key[e.code]&&phase==='playing'){e.preventDefault();if(!e.repeat)set(key[e.code],e.code,true);}
  if(!e.repeat&&e.code==='KeyR'&&phase==='playing'){e.preventDefault();home();}
 });
 window.addEventListener('keyup',e=>{if(key[e.code])set(key[e.code],e.code,false);});
@@ -287,10 +304,10 @@ for(const [dom,k] of [['btnLeft','left'],['btnRight','right'],['btnGas','gas'],[
  b.addEventListener('pointerdown',e=>{if(phase!=='playing')return;e.preventDefault();b.setPointerCapture(e.pointerId);set(k,e.pointerId,true);});
  for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,e=>set(k,e.pointerId,false));
 }
-$('startBtn').addEventListener('click',()=>{stopVoice();rig();warmVoice();resetRace(true);});
+$('startBtn').addEventListener('click',queueStart);
 $('resetBtn').addEventListener('click',home);
 $('seToggleBtn').addEventListener('click',()=>{prefs.isSeOn=!prefs.isSeOn;const b=$('seToggleBtn');b.classList.toggle('active',prefs.isSeOn);b.textContent=prefs.isSeOn?'🔔 SE ON':'🔕 SE OFF';if(prefs.isSeOn)rig();});
 $('voiceToggleBtn').addEventListener('click',()=>{prefs.isVoiceOn=!prefs.isVoiceOn;const b=$('voiceToggleBtn');b.classList.toggle('active',prefs.isVoiceOn);b.textContent=prefs.isVoiceOn?'🗣️ ボイス ON':'🤐 ボイス OFF';if(!prefs.isVoiceOn)stopVoice();else warmVoice();});
-document.querySelectorAll('.difficulty-btn').forEach(b=>b.addEventListener('click',()=>{if(phase==='playing') return;mode=b.dataset.mode;configureCourse();$('overlayTitle').textContent='ラジコンで遊ぼう。';$('overlayDesc').innerHTML='5台で2周。1周目は3位以内で通過。<br>2周目を1位でゴールするとクリア！<br><small>※画面の100円は演出です。無料で遊べます。</small>';$('startBtn').textContent='100円入れて遊ぶ';resetRace(false);}));
+document.querySelectorAll('.difficulty-btn').forEach(b=>b.addEventListener('click',()=>{if(phase==='playing'||phase==='countdown') return;mode=b.dataset.mode;configureCourse();$('overlayTitle').textContent='ラジコンで遊ぼう。';$('overlayDesc').innerHTML='5台で2周。1周目は3位以内で通過。<br>2周目を1位でゴールするとクリア！<br><small>※画面の100円は演出です。無料で遊べます。</small>';$('startBtn').textContent='100円入れて遊ぶ';resetRace(false);}));
 configureCourse();resetRace(false);requestAnimationFrame(frame);
 })();
