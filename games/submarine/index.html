@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="preload" as="image" href="/games/submarine/portraits/justice-god03.jpg">
+<link rel="preload" as="image" href="/games/submarine/portraits/idol-cry.webp">
 <title>ジャスティスサブマリン | Justice Submarine</title>
 <style>
 :root {
@@ -885,7 +886,7 @@ kbd {
 .naomi-game-breadcrumb a:focus-visible,.naomi-game-breadcrumb a:hover{color:#fff7eb;text-decoration:underline;text-underline-offset:5px}
 @media(max-width:520px){.naomi-game-breadcrumb{margin-bottom:5px}.naomi-game-breadcrumb a{font-size:9px}}
 </style>
-<link rel="stylesheet" href="/games/submarine/game-v3.css?v=20261122-coin">
+<link rel="stylesheet" href="/games/submarine/game-v3.css?v=20261122-cry-width">
 </head>
 <body>
 <div class="game-container">
@@ -1071,12 +1072,21 @@ class NaomiCharacter {
     if (this.imgElement.getAttribute('src') === src) return;
     const frame = this.imgElement.parentElement;
     frame.classList.remove('justice-reveal');
+    this.imgElement.classList.remove('miss-cry');
     this.imgElement.src = src;
     if (src.endsWith('/justice-god03.jpg')) {
       this.imgElement.decode().then(() => {
         if (this.imgElement.getAttribute('src') === src) frame.classList.add('justice-reveal');
       }).catch(() => {});
     }
+  }
+
+  showMiss() {
+    if (this.currentCostume !== 'idol') return;
+    this.imgElement.src = PORTRAIT_DIR + 'idol-cry.webp';
+    this.imgElement.classList.remove('miss-cry');
+    void this.imgElement.offsetWidth;
+    this.imgElement.classList.add('miss-cry');
   }
 
   setState(state, line = '') {
@@ -1141,6 +1151,6 @@ class NaomiCharacter {
 // ==========================================
 
 </script>
-<script src="/games/submarine/game-v3.js?v=20261122-coin"></script>
+<script src="/games/submarine/game-v3.js?v=20261122-cry-width"></script>
 </body>
 </html>

@@ -468,6 +468,7 @@
         reloadTimer=MISS_RELOAD;
         const [id,line]=pick(MISS_VOICES);
         speak(line,"sad",1.2);
+        naomi.showMiss();
         playVoice(id);
         return false;
       }

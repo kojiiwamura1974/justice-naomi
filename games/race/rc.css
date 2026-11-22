@@ -27,3 +27,8 @@
   color:#fff1ca; border-color:#eec479; background:#071321e8;
 }
 @media(prefers-reduced-motion:reduce){.scope-viewport .checkpoint-toast.coin-countdown{transition:none}}
+
+/* Match the main reading column on the official Naomi homepage. */
+body{padding-inline:0}
+.game-container{width:84%;max-width:1400px;min-width:0}
+@media(max-width:1050px){.game-container{width:88%}}
