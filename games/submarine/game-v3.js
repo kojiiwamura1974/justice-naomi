@@ -19,7 +19,7 @@
   const LEVELS={
     easy:{label:"やさしい",quotas:[200,500,900],hitScale:1.28},
     normal:{label:"ふつう",quotas:[300,800,1500],hitScale:1},
-    hard:{label:"むずかしい",quotas:[500,1300,2600],hitScale:.80}
+    hard:{label:"むずかしい",quotas:[500,1500,2700],hitScale:.80}
   };
   const MISS_VOICES=[["miss_oshii","おしいー。"],["miss_uso","うそー。"],["miss_maji","まじっ？"],["miss_nai","ないわー。"],["miss_tsugi","次はいけるっ！"]];
   const HIT_VOICES=[["hit_yatta","やったやったー！"],["hit_omigoto","お見事！"],["hit_touzen","当然っ！"],["hit_tsugi","次も当てるっ！"],["hit_rakushou","楽勝っ！"]];
