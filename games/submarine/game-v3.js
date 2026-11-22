@@ -201,7 +201,7 @@
     if(checkpointIndex===2){endGame("complete");return;}
     checkpointIndex++;
     const next=LEVELS[difficulty].quotas[checkpointIndex];
-    showStageMessage("STAGE CLEAR!　次は "+next+"点",1.9);
+    showStageMessage("TIME EXTENDED!　次は "+next+"点",1.9);
     // The ship sinking stays visible. No fullscreen character cut-in here.
     if(sinkingHold<=.05){
       speak("やった！　次の20秒もいけるよ！","happy",1.7);
