@@ -26,7 +26,9 @@ const files = [
   'games/race/audio/hit_yatta.mp3',
   'games/race/audio/miss_oshii.mp3',
   'games/race/audio/miss_uso.mp3',
-  ...['game-v3.js', 'game-v3.css', 'cover.svg', ...voices.map(v=>`voice/${v}.mp3`)].map(f=>`${submarine}/${f}`)
+  ...['game-v3.js', 'game-v3.css', 'cover.svg',
+    ...['school', 'idol-peace', 'idol-ready', 'casual-wave', 'casual-cheer'].map(p=>`portraits/${p}.webp`),
+    ...voices.map(v=>`voice/${v}.mp3`)].map(f=>`${submarine}/${f}`)
 ];
 const styles = `
 :root{color-scheme:dark;--bg:#07151e;--panel:#102431;--text:#edf9fc;--muted:#acc5d0;--mint:#78e3ce;--rule:#294858}
