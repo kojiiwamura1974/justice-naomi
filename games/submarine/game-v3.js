@@ -120,6 +120,7 @@
     toastExpires=performance.now()/1000+hold;
   }
   function startGame(){
+    naomi.beginPlay();
     stopVoice();
     prepareVoice();
     stopFlightSound(.04);
