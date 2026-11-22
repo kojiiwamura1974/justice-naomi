@@ -16,6 +16,16 @@ const voices = [
 ];
 const files = [
   'assets/favicon.svg',
+  'games/race/cabinet.css',
+  'games/race/cover.svg',
+  'games/race/index.html',
+  'games/race/rc.css',
+  'games/race/rc.js',
+  'games/race/audio/endwon.mp3',
+  'games/race/audio/hit_justice.mp3',
+  'games/race/audio/hit_yatta.mp3',
+  'games/race/audio/miss_oshii.mp3',
+  'games/race/audio/miss_uso.mp3',
   ...['game-v3.js', 'game-v3.css', 'cover.svg', ...voices.map(v=>`voice/${v}.mp3`)].map(f=>`${submarine}/${f}`)
 ];
 const styles = `
@@ -34,7 +44,7 @@ function portal(locale) {
 <html lang="${x.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${x.name}</title><meta name="description" content="${x.lead}"><meta name="theme-color" content="#07151e"><link rel="canonical" href="${origin}${x.localePath}"><link rel="alternate" hreflang="ja" href="${origin}/"><link rel="alternate" hreflang="en" href="${origin}/en/"><link rel="icon" href="/assets/favicon.svg"><style>${styles}</style></head>
 <body><a class="skip" href="#games">${x.skip}</a><div class="wrap"><header class="header"><span class="brand">KOZO CLUB</span><nav aria-label="Navigation"><a href="${naomi}/">PROJECT NAOMI</a><a href="${x.alternate}" hreflang="${locale==='ja'?'en':'ja'}">${x.swap}</a></nav></header>
 <main><section class="hero"><div class="small">KOZO CLUB ARCADE</div><h1>${x.name}</h1><p>${x.lead}</p></section>
-<section id="games" class="games" aria-label="${x.skip}"><a class="card" href="/games/submarine/"><img class="visual" src="/games/submarine/cover.svg" alt=""><div class="copy"><div class="small">01 / SUBMARINE</div><h2>${x.game}</h2><p>${x.desc}</p><span class="play">${x.play} →</span></div></a></section>
+<section id="games" class="games" aria-label="${x.skip}"><a class="card" href="/games/submarine/"><img class="visual" src="/games/submarine/cover.svg" alt=""><div class="copy"><div class="small">01 / SUBMARINE</div><h2>${x.game}</h2><p>${x.desc}</p><span class="play">${x.play} →</span></div></a><a class="card" href="/games/race/"><img class="visual" src="/games/race/cover.svg" alt=""><div class="copy"><div class="small">02 / RC RACING</div><h2>${locale==='ja'?'ジャスティスRC':'Justice RC'}</h2><p>${locale==='ja'?'上から見下ろすレトロなラジコンレース．3つのコースを駆け抜けよう．':'A top-down retro RC race with three courses.'}</p><span class="play">${x.play} →</span></div></a></section>
 <p class="notice">${x.note} <a href="${naomi}/games/submarine/">${x.old}</a></p></main>
 <footer class="footer"><a href="https://kozo-club.com/">KOZO CLUB</a><a href="${naomi}/">PROJECT NAOMI</a></footer></div></body></html>\n`;
 }
