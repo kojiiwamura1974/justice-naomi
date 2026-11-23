@@ -7,8 +7,6 @@
 /games/justice-rc /games/justice-rc/ 301
 /en/games /en/games/ 301
 /games/ /games/index.html 200
-/games/justice-submarine/ /games/submarine/index.html 200
-/games/justice-rc/ /games/race/index.html 200
 /en/games/ /en/games/index.html 200
 /prototype /prototype/ 301
 /prototype/* /prototype/:splat 200
