@@ -11,7 +11,8 @@ body.games-page{background:#111820;color:#f4f0e8}
 .game-entry{display:grid;grid-template-columns:minmax(0,48%) minmax(0,1fr);min-width:0;overflow:hidden;background:#192432;border:1px solid #52616b;border-radius:4px;transition:transform .2s,border-color .2s,box-shadow .2s}
 .game-entry:hover{transform:translateY(-3px);border-color:#d9ac82;box-shadow:0 14px 35px #0006}
 .game-entry:focus-visible{outline:3px solid #ffcea4;outline-offset:5px}
-.game-entry>img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#0c2439}
+.game-entry>picture{display:block;min-width:0}
+.game-entry>picture>img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#0c2439}
 .game-entry-info{padding:22px 24px 26px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
 .game-entry-copy .type{font-size:9px;letter-spacing:.16em;color:#deb58e;margin:0 0 11px}
 .game-entry-copy h2{font:700 clamp(22px,3vw,30px)/1.2 Georgia,serif;letter-spacing:.06em;margin:0 0 10px}
@@ -20,5 +21,5 @@ body.games-page{background:#111820;color:#f4f0e8}
 .games-catalog-note{font-size:11px;line-height:1.8;color:#99a7b1;margin:32px 0 0}
 .games-page footer{border-top:1px solid #29333d}
 @media(max-width:1050px){.games-archive{width:88%}}
-@media(max-width:700px){.games-archive{padding:45px 0 85px}.game-entry{grid-template-columns:minmax(0,1fr)}.games-heading h1{font-size:clamp(38px,9vw,60px)}.games-heading .games-lede{font-size:12px}.game-catalog{grid-template-columns:1fr;gap:24px}.game-entry-info{padding:18px 18px 20px}.games-page .header nav{gap:clamp(7px,2vw,17px)}}
+@media(max-width:700px){.games-archive{padding:45px 0 85px}.game-entry{grid-template-columns:minmax(0,1fr)}.game-entry>picture>img{height:auto;aspect-ratio:4/3;object-fit:contain}.games-heading h1{font-size:clamp(38px,9vw,60px)}.games-heading .games-lede{font-size:12px}.game-catalog{grid-template-columns:1fr;gap:24px}.game-entry-info{padding:18px 18px 20px}.games-page .header nav{gap:clamp(7px,2vw,17px)}}
 @media(max-width:400px){.games-page .header .logo{font-size:8px;letter-spacing:.04em}.games-page .header nav{gap:7px;letter-spacing:0}.games-page .header nav a{font-size:8px}}
