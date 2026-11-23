@@ -67,7 +67,7 @@ try {
     cpSync(join(root,path),dest);
   }
   let html=readFileSync(join(root,submarine,'index.html'),'utf8');
-  html=replaceOne(html, `href="${naomi}/${submarine}/"`,`href="${origin}/${submarine}/"`);
+  html=replaceOne(html, `href="${naomi}/games/justice-submarine/"`,`href="${origin}/${submarine}/"`);
   html=replaceOne(html,'<a href="/games/">← GAME MENU</a>','<a href="/">← GAME MENU</a>');
   html=replaceOne(html,'<a href="/">PROJECT NAOMI</a>',`<a href="${naomi}/">PROJECT NAOMI</a>`);
   write(`${submarine}/index.html`,html);
