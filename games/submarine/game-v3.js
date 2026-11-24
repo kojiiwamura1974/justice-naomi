@@ -43,6 +43,8 @@
   let elapsed=0,timeLeft=60,checkpointIndex=0,holdDir=0,reloadTimer=0,sinkingHold=0,gameSec=0,wavePhase=0;
   let ships=[],shots=[],sparks=[],smoke=[],rings=[];
   let frameLast=0,activePointer=null,lastPointerX=0;
+  const scopeTouch=$("scopeTouch");
+  let scopePointer=null,scopeTarget=null;
   let reactionExpires=0,toastExpires=0,shakeTime=0,flash=0;
   let audio=null,flightAudio=null,pendingCheer=null,pendingResult=null;
   try{best=Number(localStorage.getItem("naomi-submarine-best-v4")||0);}catch(e){best=0;}
@@ -123,7 +125,7 @@
   }
   function queueStart(){
     if(state!=="ready"&&state!=="over")return;
-    state="countdown";introTime=3;holdDir=0;keyboardHeld.clear();
+    clearTouchScope();state="countdown";introTime=3;holdDir=0;keyboardHeld.clear();
     stopVoice();stopFlightSound(.04);
     if(prefs.isVoiceOn||prefs.isSeOn)audioContext();
     prepareVoice();
@@ -159,6 +161,7 @@
   }
   function endGame(reason){
     if(state!=="playing")return;
+    clearTouchScope();
     if(sinkingHold>.04){
       // Gameplay stops at the exact 20/40/60-second gate. Only the ship's
       // remaining sinking animation plays; its result overlay waits quietly.
@@ -184,7 +187,7 @@
       overlayDesc.innerHTML="最終スコア："+score+"点<br>"+(qualified?"全ステージ達成！":"またチャレンジしよう！")+"";
     }
     speak(clip[1],reaction==="loss"?"sad":"happy",99);
-    startBtn.textContent="もう100円！";
+    startBtn.textContent="再プレイ";
     overlay.classList.add("active");
     showStageMessage("",0);
     $toast.classList.remove("visible");
@@ -408,7 +411,7 @@
     wavePhase+=dt;reloadTimer=Math.max(0,reloadTimer-dt);
     sinkingHold=Math.max(0,sinkingHold-dt);shakeTime=Math.max(0,shakeTime-dt);
     flash=Math.max(0,flash-dt);
-    if(holdDir&&state==="playing")bearing=clamp(bearing+holdDir*25*dt,-42,42);
+    if(scopePointer===null&&holdDir&&state==="playing")bearing=clamp(bearing+holdDir*25*dt,-42,42);
     for(const ship of ships){
       const band=BANDS[ship.lane];
       if(ship.dead>0){ship.dead-=dt;if(ship.dead<=0)resetShip(ship);}
@@ -749,8 +752,37 @@
     }
   }
   bindHold(leftBtn,-1);bindHold(rightBtn,1);
+  function scopeFromPointer(e,node){
+    const box=node.getBoundingClientRect(), reach=node===canvas?.46:.37;
+    const raw=clamp((e.clientX-box.left-box.width/2)/(box.width*reach),-1,1);
+    const amount=Math.abs(raw)<=.045?0:Math.sign(raw)*(Math.abs(raw)-.045)/.955;
+    bearing=amount*42;
+    scopeTouch.style.setProperty("--stick-x",amount*37+"%");
+    updateHUD();
+  }
+  function clearTouchScope(){
+    if(scopePointer===null)return;
+    const id=scopePointer,node=scopeTarget;
+    scopePointer=null;scopeTarget=null;bearing=0;
+    canvas.classList.remove("dragging");
+    scopeTouch.style.setProperty("--stick-x","0%");
+    if(node.hasPointerCapture(id))node.releasePointerCapture(id);
+    updateHUD();
+  }
+  for(const node of [scopeTouch,canvas]){
+    node.addEventListener("pointerdown",e=>{
+      if(e.pointerType!=="touch"||state!=="playing"||scopePointer!==null||activePointer!==null)return;
+      e.preventDefault();node.setPointerCapture(e.pointerId);
+      scopePointer=e.pointerId;scopeTarget=node;holdDir=0;
+      if(node===canvas)canvas.classList.add("dragging");
+      scopeFromPointer(e,node);
+    });
+    node.addEventListener("pointermove",e=>{if(scopePointer===e.pointerId&&state==="playing")scopeFromPointer(e,node);});
+    for(const ev of ["pointerup","pointercancel","lostpointercapture"])
+      node.addEventListener(ev,e=>{if(scopePointer===e.pointerId)clearTouchScope();});
+  }
   canvas.addEventListener("pointerdown",e=>{
-    if(state!=="playing")return;
+    if(state!=="playing"||e.pointerType==="touch"||scopePointer!==null||activePointer!==null)return;
     const box=canvas.getBoundingClientRect();
     const x=(e.clientX-box.left)/box.width*W,y=(e.clientY-box.top)/box.height*H;
     if(x<20||x>W-20||y<20||y>H-20)return;
@@ -787,7 +819,13 @@
     if(e.code==="KeyR"&&!e.repeat&&state==="over")queueStart();
   });
   window.addEventListener("keyup",e=>{keyboardHeld.delete(e.code);syncKeySteering();});
-  window.addEventListener("blur",()=>{keyboardHeld.clear();holdDir=0;});
+  function clearInput(){
+    keyboardHeld.clear();holdDir=0;clearTouchScope();
+    const id=activePointer;activePointer=null;canvas.classList.remove("dragging");
+    if(id!==null&&canvas.hasPointerCapture(id))canvas.releasePointerCapture(id);
+  }
+  window.addEventListener("blur",clearInput);
+  document.addEventListener("visibilitychange",()=>{if(document.hidden)clearInput();});
   seBtn.addEventListener("click",()=>{
     prefs.isSeOn=!prefs.isSeOn;
     if(!prefs.isSeOn)stopFlightSound(.08);
@@ -802,7 +840,8 @@
     else stopVoice();
   });
   diffButtons.forEach(b=>b.addEventListener("click",()=>setDifficulty(b.dataset.difficulty)));
-  fireBtn.addEventListener("click",fire);
+  fireBtn.addEventListener("pointerdown",e=>{if(e.pointerType==="touch"){e.preventDefault();fire();}});
+  fireBtn.addEventListener("click",e=>{if(e.pointerType!=="touch")fire();});
   startBtn.addEventListener("click",queueStart);
   setupFleet();setDifficulty("normal");updateFireControl();requestAnimationFrame(loop);
 })();

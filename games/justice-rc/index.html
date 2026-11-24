@@ -846,7 +846,7 @@ kbd {
 @media(max-width:520px){.naomi-game-breadcrumb{margin-bottom:5px}.naomi-game-breadcrumb a{font-size:9px}}
 </style>
 <link rel="stylesheet" href="./cabinet.css">
-<link rel="stylesheet" href="./rc.css?v=20261122-camera-wall-reactions">
+<link rel="stylesheet" href="./rc.css?v=20261124-touch-play">
 </head>
 <body>
 <div class="game-container">
@@ -864,10 +864,9 @@ kbd {
       <div class="glass-glare"></div>
       <div id="overlayScreen" class="scope-overlay active">
         <div class="scope-overlay-inner">
-          <div class="coin" aria-hidden="true">100</div>
           <h2 id="overlayTitle">ラジコンで遊ぼう。</h2>
-          <p id="overlayDesc">5台で2周。1周目は3位以内で通過。<br>2周目を1位でゴールするとクリア！<br><small>※画面の100円は演出です。無料で遊べます。</small></p>
-          <button id="startBtn" class="start-btn">100円入れて遊ぶ</button>
+          <p id="overlayDesc">5台で2周。1周目は3位以内で通過。<br>2周目を1位でゴールするとクリア！</p>
+          <button id="startBtn" class="start-btn">プレイ</button>
         </div>
       </div>
       <div id="checkpointToast" class="checkpoint-toast" role="status" aria-live="polite"></div>
@@ -886,6 +885,7 @@ kbd {
     <button id="resetBtn" class="pill-btn" type="button">↺ 位置を戻す</button>
   </div>
   <div class="submarine-controls">
+    <div class="touch-paddle" id="steerTouch" role="group" aria-label="ハンドル：左右にスライド，離すと中央"><span aria-hidden="true"></span></div>
     <div class="turn-buttons">
       <button id="btnLeft" class="scope-btn" aria-label="左に切る" type="button">◀</button>
       <button id="btnRight" class="scope-btn" aria-label="右に切る" type="button">▶</button>
@@ -895,7 +895,8 @@ kbd {
       <button id="btnGas" class="fire-btn gas" aria-label="アクセル" type="button">アクセル</button>
     </div>
   </div>
-  <div class="scope-help">← →／A D：ハンドル　↑／W：アクセル　↓／S：ブレーキ・バック　R：位置を戻す</div>
+  <div class="scope-help touch-help">ハンドルを左右にスライド．離すと中央に戻ります．</div>
+  <div class="scope-help desktop-help">← →／A D：ハンドル　↑／W：アクセル　↓／S：ブレーキ・バック　R：位置を戻す</div>
   <div class="difficulty-box" aria-label="難易度選択">
     <span class="difficulty-title">コース</span>
     <div class="difficulty-buttons" role="group" aria-label="コース">
@@ -1075,6 +1076,6 @@ class NaomiCharacter {
 // ==========================================
 
 </script>
-<script src="./rc.js?v=20261122-camera-wall-reactions"></script>
+<script src="./rc.js?v=20261124-touch-play"></script>
 </body>
 </html>

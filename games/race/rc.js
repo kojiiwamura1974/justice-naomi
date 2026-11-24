@@ -107,7 +107,22 @@ let ac, engine, engineGain, audioClip, at=0, voiceSeq=0, introTime=0;
 const voiceData=new Map(), portraitCache=[];
 const controls={left:new Set(),right:new Set(),gas:new Set(),brake:new Set()};
 const has=k=>controls[k].size>0;
-const resetInput=()=>{for(const s of Object.values(controls))s.clear();document.querySelectorAll('.held').forEach(x=>x.classList.remove('held'));};
+const steerTouch=$('steerTouch');
+let steeringPointer=null,touchSteer=0;
+function setTouchSteer(value){
+ touchSteer=value;
+ steerTouch.style.setProperty('--stick-x',value*37+'%');
+}
+function clearTouchSteer(){
+ const id=steeringPointer;steeringPointer=null;setTouchSteer(0);
+ if(id!==null&&steerTouch.hasPointerCapture(id))steerTouch.releasePointerCapture(id);
+}
+function steerFromPointer(e){
+ const box=steerTouch.getBoundingClientRect();
+ const raw=clamp((e.clientX-box.left-box.width/2)/(box.width*.37),-1,1);
+ setTouchSteer(Math.abs(raw)<=.07?0:Math.sign(raw)*(Math.abs(raw)-.07)/.93);
+}
+const resetInput=()=>{clearTouchSteer();for(const s of Object.values(controls))s.clear();document.querySelectorAll('.held').forEach(x=>x.classList.remove('held'));};
 function rig(){
  try{
    if(!ac){
@@ -208,7 +223,7 @@ function progress(next,quietLap=false){
    const win=car.laps===2&&rank===1;
    $('overlayTitle').textContent=win?'CLEAR!':car.laps===1?'GAME OVER':'FINISH';
    $('overlayDesc').textContent=car.laps===1?'1周目 '+rank+'位。次は3位以内を目指そう。':win?'2周目 1位！ ジャスティスRCクリア！':'2周目 '+rank+'位。クリアは1位！';
-   $('startBtn').textContent='もう100円！';
+   $('startBtn').textContent='再プレイ';
    $('overlayScreen').classList.add('active');
    if(win){speak('ジャスティスっ！','happy','hit_justice');beep(740);naomi.addFever(100);}
    else{speak(car.laps===2?'なかなかよかったよ．つぎもがんばって！':'おしいー。',car.laps===2?'happy':'sad',car.laps===2?'endwon':'miss_oshii');beep(155);}
@@ -256,7 +271,7 @@ function update(dt){
  else v*=Math.pow(.32,dt);
  car.v=clamp(v,-93,272);
  if(Math.abs(car.v)<.9&&!f&&!r)car.v=0;
- const dir=(has('right')?1:0)-(has('left')?1:0), av=Math.abs(car.v);
+ const dir=steeringPointer===null?(has('right')?1:0)-(has('left')?1:0):touchSteer, av=Math.abs(car.v);
  car.a+=dir*Math.sign(car.v)*dt*(2.55*Math.min(1,av/38)-.52*av/272);
  const px=car.x,py=car.y;
  car.x+=Math.cos(car.a)*car.v*dt;car.y+=Math.sin(car.a)*car.v*dt;
@@ -385,10 +400,17 @@ for(const [dom,k] of [['btnLeft','left'],['btnRight','right'],['btnGas','gas'],[
  b.addEventListener('pointerdown',e=>{if(phase!=='playing')return;e.preventDefault();b.setPointerCapture(e.pointerId);set(k,e.pointerId,true);});
  for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,e=>set(k,e.pointerId,false));
 }
+steerTouch.addEventListener('pointerdown',e=>{
+ if(e.pointerType!=='touch'||phase!=='playing'||steeringPointer!==null)return;
+ e.preventDefault();steerTouch.setPointerCapture(e.pointerId);steeringPointer=e.pointerId;steerFromPointer(e);
+});
+steerTouch.addEventListener('pointermove',e=>{if(steeringPointer===e.pointerId)steerFromPointer(e);});
+for(const ev of ['pointerup','pointercancel','lostpointercapture'])
+ steerTouch.addEventListener(ev,e=>{if(steeringPointer===e.pointerId)clearTouchSteer();});
 $('startBtn').addEventListener('click',queueStart);
 $('resetBtn').addEventListener('click',home);
 $('seToggleBtn').addEventListener('click',()=>{prefs.isSeOn=!prefs.isSeOn;const b=$('seToggleBtn');b.classList.toggle('active',prefs.isSeOn);b.textContent=prefs.isSeOn?'🔔 SE ON':'🔕 SE OFF';if(prefs.isSeOn)rig();});
 $('voiceToggleBtn').addEventListener('click',()=>{prefs.isVoiceOn=!prefs.isVoiceOn;const b=$('voiceToggleBtn');b.classList.toggle('active',prefs.isVoiceOn);b.textContent=prefs.isVoiceOn?'🗣️ ボイス ON':'🤐 ボイス OFF';if(!prefs.isVoiceOn)stopVoice();else warmVoice();});
-document.querySelectorAll('.difficulty-btn').forEach(b=>b.addEventListener('click',()=>{if(phase==='playing'||phase==='countdown') return;mode=b.dataset.mode;configureCourse();$('overlayTitle').textContent='ラジコンで遊ぼう。';$('overlayDesc').innerHTML='5台で2周。1周目は3位以内で通過。<br>2周目を1位でゴールするとクリア！<br><small>※画面の100円は演出です。無料で遊べます。</small>';$('startBtn').textContent='100円入れて遊ぶ';resetRace(false);}));
+document.querySelectorAll('.difficulty-btn').forEach(b=>b.addEventListener('click',()=>{if(phase==='playing'||phase==='countdown') return;mode=b.dataset.mode;configureCourse();$('overlayTitle').textContent='ラジコンで遊ぼう。';$('overlayDesc').innerHTML='5台で2周。1周目は3位以内で通過。<br>2周目を1位でゴールするとクリア！';$('startBtn').textContent='プレイ';resetRace(false);}));
 configureCourse();resetRace(false);requestAnimationFrame(frame);
 })();
