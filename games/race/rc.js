@@ -105,6 +105,8 @@ const p0=-73;
 let car, enemies, phase='ready', prev=0, accumulator=0, hudAt=0, toastTil=0, reactionTil=0, spin=0, immunity=0;
 let ac, engine, engineGain, audioClip, at=0, voiceSeq=0, introTime=0;
 const voiceData=new Map(), portraitCache=[];
+const MISS_VOICES=[["miss_oshii","おしいー。"],["miss_uso","うそー。"],["miss_maji","まじっ？"],["miss_nai","ないわー。"],["miss_tsugi","次はいけるっ！"]];
+const spinVoices=new Set(MISS_VOICES.map(([id])=>id));
 const controls={left:new Set(),right:new Set(),gas:new Set(),brake:new Set()};
 const has=k=>controls[k].size>0;
 const steerTouch=$('steerTouch');
@@ -136,9 +138,9 @@ function rig(){
 function warmVoice(){
  if(!prefs.isVoiceOn)return;
  rig();if(!ac)return;
- for(const id of ['hit_yatta','hit_justice','miss_oshii','miss_uso','endwon']){
+ for(const id of ['hit_yatta','hit_justice','endwon',...spinVoices]){
   if(voiceData.has(id))continue;
-  voiceData.set(id,fetch('./audio/'+id+'.mp3').then(r=>{if(!r.ok)throw Error(id);return r.arrayBuffer();}).then(buf=>ac.decodeAudioData(buf)).catch(()=>null));
+  voiceData.set(id,fetch((spinVoices.has(id)?'/games/submarine/voice/':'./audio/')+id+'.mp3').then(r=>{if(!r.ok)throw Error(id);return r.arrayBuffer();}).then(buf=>ac.decodeAudioData(buf)).catch(()=>null));
  }
 }
 function stopVoice(){
@@ -301,7 +303,8 @@ function update(dt){
 }
 function startSpin(){
  car.v=0;spin=2;immunity=.9;
- beep(125,'square');speak('うそー。','panic','miss_uso','miss');toast('スピン！',2);
+ const [id,line]=MISS_VOICES[Math.floor(Math.random()*MISS_VOICES.length)];
+ beep(125,'square');speak(line,'panic',id,'miss');toast('スピン！',2);
 }
 function followCamera(dt,snap=false){
  // World remains north-up. Bias framing down the track, not toward the

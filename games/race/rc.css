@@ -33,8 +33,10 @@ body{padding-inline:0}
 .game-container{width:84%;max-width:1400px;min-width:0}
 @media(max-width:1050px){.game-container{width:88%}}
 
-/* The approved reactions retain the complete head and hand gestures. */
+/* Keep the approved hit portraits as before. Frame the cry like the
+   normal RC portrait; the hands at the eyes remain in the upper crop. */
 .char-photo-frame .char-img.rc-reaction{object-fit:contain;object-position:center}
+.char-photo-frame .char-img.rc-reaction[src$='-cry.webp']{object-fit:cover;object-position:center 20%}
 
 
 .touch-paddle,.scope-help.touch-help{display:none}
