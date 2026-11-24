@@ -886,7 +886,7 @@ kbd {
 .naomi-game-breadcrumb a:focus-visible,.naomi-game-breadcrumb a:hover{color:#fff7eb;text-decoration:underline;text-underline-offset:5px}
 @media(max-width:520px){.naomi-game-breadcrumb{margin-bottom:5px}.naomi-game-breadcrumb a{font-size:9px}}
 </style>
-<link rel="stylesheet" href="/games/submarine/game-v3.css?v=20261122-cry-outfits">
+<link rel="stylesheet" href="/games/submarine/game-v3.css?v=20261124-touch-play">
 </head>
 <body>
 <div class="game-container">
@@ -904,10 +904,9 @@ kbd {
       <div class="glass-glare"></div>
       <div id="overlayScreen" class="scope-overlay active">
         <div class="scope-overlay-inner">
-          <div class="coin">100</div>
           <h2 id="overlayTitle"></h2>
           <p id="overlayDesc">角丸の潜望鏡で戦艦・駆逐艦・遠くの潜水艦を狙おう．<br>一発ずつ魚雷を撃って，20秒ごとのノルマを越えよう．最大60秒．</p>
-          <button id="startBtn" class="start-btn">100円入れて遊ぶ</button>
+          <button id="startBtn" class="start-btn">プレイ</button>
         </div>
       </div>
       <div id="checkpointToast" class="checkpoint-toast" role="status" aria-live="polite"></div>
@@ -933,13 +932,15 @@ kbd {
     <div class="stage-progress" aria-hidden="true"><span id="stageProgress"></span></div>
   </div>
   <div class="submarine-controls">
+    <div class="touch-paddle" id="scopeTouch" role="group" aria-label="潜望鏡：左右にスライド，離すと中央"><span aria-hidden="true"></span></div>
     <div class="turn-buttons">
       <button id="btnLeft" class="scope-btn" aria-label="左に回す" type="button">◀</button>
       <button id="btnRight" class="scope-btn" aria-label="右に回す" type="button">▶</button>
     </div>
     <button id="btnFire" class="fire-btn" type="button">FIRE</button>
   </div>
-  <div class="scope-help">魚雷は一発ずつ．航走音と爆発音，沈没の余韻を楽しもう．操作は左右ドラッグ，← →／A D，発射はSpace／F．</div>
+  <div class="scope-help touch-help">潜望鏡を左右にスライド．離すと中央に戻ります．</div>
+  <div class="scope-help desktop-help">魚雷は一発ずつ．航走音と爆発音，沈没の余韻を楽しもう．操作は左右ドラッグ，← →／A D，発射はSpace／F．</div>
   <div class="difficulty-box" aria-label="難易度選択">
     <span class="difficulty-title">難易度</span>
     <div class="difficulty-buttons" role="group" aria-label="難易度">
@@ -1150,6 +1151,6 @@ class NaomiCharacter {
 // ==========================================
 
 </script>
-<script src="/games/submarine/game-v3.js?v=20261122-extend"></script>
+<script src="/games/submarine/game-v3.js?v=20261124-touch-play"></script>
 </body>
 </html>

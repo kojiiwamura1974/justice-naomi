@@ -35,3 +35,14 @@ body{padding-inline:0}
 
 /* The approved reactions retain the complete head and hand gestures. */
 .char-photo-frame .char-img.rc-reaction{object-fit:contain;object-position:center}
+
+
+.touch-paddle,.scope-help.touch-help{display:none}
+@media(any-pointer:coarse){
+  .submarine-controls .turn-buttons,.scope-help.desktop-help{display:none}
+  .scope-help.touch-help{display:block}
+  .touch-paddle{display:block;position:relative;flex:0 1 126px;min-width:74px;height:48px;border:2px solid #8598a8;border-radius:11px;background:linear-gradient(#263d4e,#172633);touch-action:none;user-select:none;-webkit-user-select:none}
+  .touch-paddle::before{content:"";position:absolute;left:9%;right:9%;top:50%;height:2px;background:#8598a8}
+  .touch-paddle::after{content:"";position:absolute;left:50%;top:27%;height:46%;width:1px;background:#c6d4da}
+  .touch-paddle span{position:absolute;z-index:1;pointer-events:none;left:calc(50% + var(--stick-x,0%));top:50%;width:27px;height:30px;border:2px solid #fae0b4;border-radius:8px;background:#31506b;box-shadow:0 2px 4px #0009;transform:translate(-50%,-50%)}
+}
