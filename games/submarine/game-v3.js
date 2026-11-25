@@ -218,7 +218,7 @@
     const reloading=reloadTimer>0;
     fireBtn.disabled=state!=="playing"||travelling||aftermath||reloading;
     fireBtn.textContent=state!=="playing"?"FIRE":
-      aftermath?"余韻…":travelling?"航走中…":reloading?"装填中…":"FIRE";
+      aftermath?"装填中…":travelling?"航走中…":reloading?"装填中…":"FIRE";
   }
   function fire(){
     // One torpedo at a time. Never interrupt the impact and sinking afterglow.
